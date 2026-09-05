@@ -1,0 +1,8 @@
+/home/geng/Codes/Photo-lens/.validation/env/lib/python3.10/site-packages/bcnz/model/cache_bayevz_calib.py:39: UserWarning: pkg_resources is deprecated as an API. See https://setuptools.pypa.io/en/latest/pkg_resources.html. The pkg_resources package is slated for removal as early as 2025-11-30. Refrain from using this package or pin to Setuptools<81.
+  import pkg_resources
+Loading the models.
+Loading the models.
+ lens_id target  nb_weight  tag    zb  zb_mean     odds  pz_width       chi2  n_band  n_narrow  best_run  chi2_per_band  pull_std_nb  pull_std_bb                                                                                                   signed_bb_pulls  p_source_gt_lens
+    3110 source        1.0 wNB1 0.073 1.438735 0.064117  0.985851  35.330047      44        39         9       0.802956     0.967689     0.649625 {"subaru_g": -0.043476, "subaru_i": 0.586982, "subaru_r": -0.588951, "subaru_y": 0.913645, "subaru_z": -0.442914}          0.809967
+    3110   lens        1.0 wNB1 0.643 0.642504 0.999971  0.006179 104.099258      44        39         4       2.365892     1.339024     2.419704    {"subaru_g": 0.463621, "subaru_i": 2.42846, "subaru_r": -2.018542, "subaru_y": 4.419617, "subaru_z": 2.261607}          0.809967
+HSC official G plus native-grid 3110 NB535 exclusion refit passed

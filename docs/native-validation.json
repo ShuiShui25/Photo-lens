@@ -1,0 +1,22 @@
+{
+  "12": {
+    "lens": {
+      "zb": 0.4469999999999996,
+      "max_abs_pz_difference": 0.0
+    },
+    "source": {
+      "zb": 0.2429999999999998,
+      "max_abs_pz_difference": 0.0
+    }
+  },
+  "3110": {
+    "lens": {
+      "zb": 0.6429999999999995,
+      "max_abs_pz_difference": 0.0
+    },
+    "source": {
+      "zb": 0.07299999999999994,
+      "max_abs_pz_difference": 0.0
+    }
+  }
+}
