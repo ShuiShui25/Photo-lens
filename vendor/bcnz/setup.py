@@ -72,7 +72,7 @@ setup(
         "Topic :: Astronomy",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     ],
-    ext_modules=cythonize(ext),
+    ext_modules=cythonize(ext, build_dir="build/cython"),
     include_dirs=[np.get_include(), "."],
     include_package_data=True,
     zip_safe=False,
