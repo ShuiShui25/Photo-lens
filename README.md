@@ -78,7 +78,7 @@ See the [Combined lens catalogue](catalogue/Combined_lens_info_V2_filtered_zs_lt
 
 ### License
 
-Photo-lens code is licensed under the [MIT License](LICENSE). Bundled BCNz is separately licensed under [GPL-3.0-or-later](vendor/bcnz/LICENCE.TXT); its license and copyright notices are retained in the source files.
+Photo-lens code is licensed under the [GPL-3.0](LICENSE). Bundled BCNz is separately licensed under [GPL-3.0-or-later](vendor/bcnz/LICENCE.TXT); its license and copyright notices are retained in the source files.
 
 ---
 
@@ -158,4 +158,4 @@ python serve.py --model-python /path/to/photo-lens-modeling/bin/python
 
 ### 许可
 
-Photo-lens 代码采用 [MIT License](LICENSE)。随包 BCNz 单独遵循 [GPL-3.0-or-later](vendor/bcnz/LICENCE.TXT)，其许可与版权声明保留在源文件中。
+Photo-lens 代码采用 [GPL-3.0](LICENSE)。随包 BCNz 单独遵循 [GPL-3.0-or-later](vendor/bcnz/LICENCE.TXT)，其许可与版权声明保留在源文件中。
