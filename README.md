@@ -43,7 +43,15 @@ By default, the modeling notebook re-evaluates the saved maximum-likelihood mode
 
 ### Option 2: HTML Dashboard
 
-Start the local backend in the photometry environment and specify the Python executable from the modeling environment:
+After installing the environments, run:
+
+```bash
+bash start_dashboard.sh
+```
+
+The script locates the `photo-lens` and `photo-lens-modeling` environments (or existing `bcnz` and `autolens-jax` environments), starts the local backend, and opens your browser automatically. No `conda activate` is required. If the dashboard is already running, it opens the existing page. Keep the terminal open while using a newly started backend; press `Ctrl+C` to stop it. Use `bash start_dashboard.sh --port 8766` for a different port, or `--no-browser` to skip opening a browser.
+
+You can also start the backend manually in the photometry environment and specify the modeling interpreter:
 
 ```bash
 conda activate photo-lens
@@ -123,7 +131,15 @@ python -m ipykernel install --user --name photo-lens-modeling --display-name Pho
 
 ### 方式二：总 HTML
 
-在测光环境中启动本地后台，并指定建模环境的 Python：
+安装环境后，运行：
+
+```bash
+bash start_dashboard.sh
+```
+
+脚本自动查找 `photo-lens` 和 `photo-lens-modeling` 环境（也支持已有的 `bcnz` 和 `autolens-jax`），启动后台并自动打开浏览器，无需先执行 `conda activate`。如果后台已运行，直接打开现有页面。新启动后台后请保持终端打开，按 `Ctrl+C` 停止。需要更换端口时运行 `bash start_dashboard.sh --port 8766`；不需要自动打开浏览器时添加 `--no-browser`。
+
+也可以在测光环境中手动启动后台，并指定建模环境的 Python：
 
 ```bash
 conda activate photo-lens
