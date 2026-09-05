@@ -1,6 +1,7 @@
 let systems = window.PHOTO_LENS_SYSTEMS;
 const $ = selector => document.querySelector(selector);
 let token = null, current = null, modelStage = 4, activeJob = null;
+let submitting = false;
 const stages = ['modeling', 'regions', 'photoz'];
 let showRegionOutlines = true, showSpecz = false, viewedSystem = null;
 function element(tag, className, text) { const node=document.createElement(tag); if(className)node.className=className;if(text!==undefined)node.textContent=text;return node; }
@@ -64,11 +65,29 @@ function route(){
 function setBusy(busy){
   for(const button of document.querySelectorAll('[data-run],[data-fit]')){
     const stage=button.dataset.run||'modeling';
-    button.disabled=busy||!token||current?.can_run?.[stage]===false;
+    button.disabled=busy||submitting||!token||current?.can_run?.[stage]===false;
     button.title=current?.can_run?.[stage]===false?(stage==='modeling'?'Complete the modeling inputs first.':'Complete the preceding stage and required inputs first.'):'';
   }
 }
-async function api(path,body){const response=await fetch(path,body?{method:'POST',headers:{'Content-Type':'application/json','X-Photo-Lens-Token':token},body:JSON.stringify(body)}:{cache:'no-store'});const data=await response.json();if(!response.ok)throw Error(data.error||`HTTP ${response.status}`);return data;}
+async function renewSession(){
+  const session=await api('/api/session');
+  token=session.token;
+  $('#connection').textContent='● Local backend connected';$('#offline').hidden=true;
+}
+async function api(path,body){
+  // A restarted backend has a new session token, even in an already open tab.
+  if(body!==undefined)await renewSession();
+  for(let attempt=0;attempt<2;attempt++){
+    const response=await fetch(path,body!==undefined?{method:'POST',cache:'no-store',headers:{'Content-Type':'application/json','X-Photo-Lens-Token':token},body:JSON.stringify(body)}:{cache:'no-store'});
+    const data=await response.json();
+    if(response.ok)return data;
+    const expired=response.status===403&&(data.code==='session_expired'||data.error==='Open the local dashboard before starting a task');
+    // Retry only an explicitly rejected session request, never an ambiguous
+    // network failure: a submitted fit must not accidentally run twice.
+    if(body!==undefined&&expired&&attempt===0){await renewSession();continue;}
+    const error=Error(data.error||`HTTP ${response.status}`);error.status=response.status;throw error;
+  }
+}
 function displayJob(job){
   if(!current||job.system!==current.id)return;
   const status=$(`[data-status="${job.stage}"]`);status.dataset.state=job.state;
@@ -76,7 +95,7 @@ function displayJob(job){
   status.textContent=({queued:'Queued',running:'Running',succeeded:'Complete',failed:'Failed — see task output',cancelled:'Stopped'}[job.state]||job.state)+elapsed;
   const log=$(`[data-log="${job.stage}"]`);log.textContent=job.log||'Waiting for the worker…';log.scrollTop=log.scrollHeight;
   $(`[data-cancel="${job.stage}"]`).hidden=!['queued','running'].includes(job.state);
-  if(job.state==='failed')log.parentElement.open=true;
+  if(['queued','running','failed'].includes(job.state))log.parentElement.open=true;
 }
 async function poll(id){
   try{
@@ -86,11 +105,26 @@ async function poll(id){
   }catch(error){activeJob=null;setBusy(false);$('#connection').textContent=`Connection lost: ${error.message}`;$('#offline').hidden=false;}
 }
 async function start(stage,mode='render'){
-  if(!token||!current)return;
+  if(!token||!current||submitting||activeJob)return;
+  const name=current.id;
   if(stage==='modeling'&&current.has_model===false)mode='fit';
+  submitting=true;
   setBusy(true);
-  try{const job=await api('/api/jobs',{system:current.id,stage,mode});activeJob=job;displayJob(job);poll(job.id);}
-  catch(error){setBusy(false);$(`[data-status="${stage}"]`).textContent=error.message;}
+  const status=$(`[data-status="${stage}"]`),log=$(`[data-log="${stage}"]`);
+  status.dataset.state='submitting';status.textContent='Submitting task…';
+  log.textContent=`Connecting to the backend and submitting ${stage} for ${name}…`;
+  log.parentElement.open=true;
+  try{const job=await api('/api/jobs',{system:name,stage,mode});activeJob=job;displayJob(job);poll(job.id);}
+  catch(error){
+    if(current?.id===name){
+      status.dataset.state='failed';
+      status.textContent=error.status?'Task not started — see task output':'Submission unconfirmed — see task output';
+      log.textContent=error.status?`The backend rejected this task (HTTP ${error.status}).\n${error.message}`
+        :`Could not confirm task submission.\n${error.message}\nCheck the backend connection and task status before trying again.`;
+      log.parentElement.open=true;
+    }
+    if(!error.status)await restoreJobs();
+  }finally{submitting=false;setBusy(!!activeJob);}
 }
 async function restoreJobs(){
   try{const jobs=(await api('/api/jobs')).filter(j=>j.system===current?.id);for(const stage of stages){const job=jobs.filter(j=>j.stage===stage).at(-1);if(job)displayJob(job);}const running=jobs.find(j=>['queued','running'].includes(j.state));if(running&&!activeJob){activeJob=running;setBusy(true);poll(running.id);}}catch{}

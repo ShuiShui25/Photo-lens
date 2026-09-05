@@ -50,6 +50,8 @@ class Jobs:
         path=self.directory/f'{ident}.log'
         try:
             with path.open('wb') as log:
+                log.write(f'Starting {job["stage"]} for {job["system"]} (mode: {job["mode"]})\nLaunching Python worker; initial imports may take a moment.\n'.encode())
+                log.flush()
                 with self.lock:
                     if job['state']=='cancelled' or self.stopping:return
                     process=subprocess.Popen(cmd,cwd=ROOT,stdout=log,stderr=subprocess.STDOUT,start_new_session=True,env={**os.environ,'MPLBACKEND':'Agg','OPENBLAS_NUM_THREADS':'1'})
@@ -124,7 +126,9 @@ class Handler(SimpleHTTPRequestHandler):
         super().do_GET()
 
     def do_POST(self):
-        if not self.allowed_host() or not secrets.compare_digest(self.headers.get('X-Photo-Lens-Token',''),self.token):return self.reply(403,{'error':'Open the local dashboard before starting a task'})
+        if not self.allowed_host():return self.reply(403,{'error':'Invalid host'})
+        if not secrets.compare_digest(self.headers.get('X-Photo-Lens-Token',''),self.token):
+            return self.reply(403,{'code':'session_expired','error':'The backend session changed. Reconnect before submitting the task.'})
         origin=self.headers.get('Origin')
         if origin and origin != f'http://{self.headers.get("Host")}':return self.reply(403,{'error':'Invalid origin'})
         try:
