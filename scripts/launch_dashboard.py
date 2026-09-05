@@ -2,6 +2,7 @@
 import argparse
 import json
 import os
+import re
 from pathlib import Path
 import shutil
 import signal
@@ -73,6 +74,48 @@ def open_dashboard(url, no_browser):
             print('Could not open a browser automatically. Open the URL above manually.', flush=True)
 
 
+def server_pid(port):
+    """Identify only a listener running this checkout's serve.py (Linux)."""
+    if not shutil.which('ss'):
+        raise RuntimeError('Stopping an existing server requires the Linux ss command (iproute2).')
+    result = subprocess.run(['ss', '-ltnp', f'sport = :{port}'],
+                            capture_output=True, text=True, check=True, timeout=5)
+    for pid in set(map(int, re.findall(r'pid=(\d+)', result.stdout))):
+        try:
+            process = Path('/proc') / str(pid)
+            cwd = (process / 'cwd').resolve()
+            args = (process / 'cmdline').read_bytes().decode().split('\0')
+            if any(arg and (cwd / arg).resolve() == ROOT / 'serve.py' for arg in args[1:]):
+                return pid
+        except (OSError, UnicodeError):
+            continue
+    return None
+
+
+def stop_dashboard(port):
+    pid = server_pid(port)
+    if pid is None:
+        raise RuntimeError(f'Cannot identify this repository\'s dashboard on port {port}. '
+                           'No process was stopped.')
+    print(f'Stopping Photo-lens on port {port} (PID {pid})…', flush=True)
+    try:
+        os.kill(pid, signal.SIGINT)
+    except ProcessLookupError:
+        return
+    deadline = time.monotonic() + 20
+    while time.monotonic() < deadline:
+        try:
+            status = (Path('/proc') / str(pid) / 'status').read_text()
+        except FileNotFoundError:
+            break
+        if re.search(r'^State:\s+Z', status, re.M):
+            break
+        time.sleep(0.2)
+    else:
+        raise RuntimeError('The server has not finished stopping; check its terminal before restarting.')
+    print('Dashboard stopped.', flush=True)
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--port', type=int, default=8765)
@@ -80,13 +123,28 @@ def main():
     parser.add_argument('--model-python', default=os.environ.get('PHOTO_LENS_MODEL_PYTHON'))
     parser.add_argument('--sextractor', default=os.environ.get('PHOTO_LENS_SEXTRACTOR'))
     parser.add_argument('--no-browser', action='store_true', help='Start without opening a browser')
+    action = parser.add_mutually_exclusive_group()
+    action.add_argument('--stop', action='store_true', help='Stop this repository\'s existing backend and its jobs')
+    action.add_argument('--restart', action='store_true', help='Stop the existing backend and start with current code')
     args = parser.parse_args()
     if not 1 <= args.port <= 65535:
         parser.error('--port must be between 1 and 65535')
     url = f'http://127.0.0.1:{args.port}'
-    if dashboard_running(url):
+    running = dashboard_running(url)
+    if args.stop or args.restart:
+        if running or server_pid(args.port) is not None:
+            stop_dashboard(args.port)
+        elif args.stop:
+            print(f'No Photo-lens dashboard is running on port {args.port}.', flush=True)
+        if args.stop:
+            return 0
+        running = False
+    if running:
         print('Dashboard is already running; opening the existing page.', flush=True)
         open_dashboard(url, args.no_browser)
+        print('This terminal does not own that server; Ctrl+C here will not stop it.\n'
+              f'To stop: bash "{ROOT / "start_dashboard.sh"}" --port {args.port} --stop\n'
+              f'To reload code: bash "{ROOT / "start_dashboard.sh"}" --port {args.port} --restart', flush=True)
         return 0
     paths, roots = environments()
     photo = python_path(args.photo_python, ('photo-lens', 'bcnz'), paths, roots)

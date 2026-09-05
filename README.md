@@ -49,7 +49,7 @@ After installing the environments, run:
 bash start_dashboard.sh
 ```
 
-The script locates the `photo-lens` and `photo-lens-modeling` environments (or existing `bcnz` and `autolens-jax` environments), starts the local backend, and opens your browser automatically. No `conda activate` is required. If the dashboard is already running, it opens the existing page. Keep the terminal open while using a newly started backend; press `Ctrl+C` to stop it. Use `bash start_dashboard.sh --port 8766` for a different port, or `--no-browser` to skip opening a browser.
+The script locates the `photo-lens` and `photo-lens-modeling` environments (or existing `bcnz` and `autolens-jax` environments), starts the local backend, and opens your browser automatically. No `conda activate` is required. If the dashboard is already running, it opens the existing page and returns to the shell; Ctrl+C in that terminal cannot stop the existing server. Use `bash start_dashboard.sh --stop` to stop it, or `bash start_dashboard.sh --restart` to restart it with the current code. Stopping or restarting also cancels its running analysis tasks. Keep the terminal open while using a newly started backend; press `Ctrl+C` to stop it. Use `bash start_dashboard.sh --port 8766` for a different port, or `--no-browser` to skip opening a browser.
 
 You can also start the backend manually in the photometry environment and specify the modeling interpreter:
 
@@ -150,7 +150,7 @@ python -m ipykernel install --user --name photo-lens-modeling --display-name Pho
 bash start_dashboard.sh
 ```
 
-脚本自动查找 `photo-lens` 和 `photo-lens-modeling` 环境（也支持已有的 `bcnz` 和 `autolens-jax`），启动后台并自动打开浏览器，无需先执行 `conda activate`。如果后台已运行，直接打开现有页面。新启动后台后请保持终端打开，按 `Ctrl+C` 停止。需要更换端口时运行 `bash start_dashboard.sh --port 8766`；不需要自动打开浏览器时添加 `--no-browser`。
+脚本自动查找 `photo-lens` 和 `photo-lens-modeling` 环境（也支持已有的 `bcnz` 和 `autolens-jax`），启动后台并自动打开浏览器，无需先执行 `conda activate`。如果后台已运行，脚本打开现有页面后返回命令行，此时在该终端按 Ctrl+C 无法停止旧后台。使用 `bash start_dashboard.sh --stop` 停止旧后台，或 `bash start_dashboard.sh --restart` 重启并加载最新代码。停止或重启也会取消该后台正在运行的分析任务。新启动后台后请保持终端打开，按 `Ctrl+C` 停止。需要更换端口时运行 `bash start_dashboard.sh --port 8766`；不需要自动打开浏览器时添加 `--no-browser`。
 
 也可以在测光环境中手动启动后台，并指定建模环境的 Python：
 
