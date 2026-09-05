@@ -446,6 +446,9 @@ def analyse(module, system: str) -> dict:
             out / f"{system}_satellites_point_fraction.reg", [satellite], source,
             ["satellite_exclusion"], ["red"],
         )
+    else:
+        # Do not display a satellite aperture left by an earlier detection run.
+        (out / f"{system}_satellites_point_fraction.reg").unlink(missing_ok=True)
 
     plot_system(
         system, raw, raw_header, source, source.data, components, primary_index,

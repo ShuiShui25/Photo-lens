@@ -139,7 +139,7 @@ $('#toggle-regions').onclick=()=>{
   showRegionOutlines=!showRegionOutlines;
   $('#toggle-regions').textContent=showRegionOutlines?'Hide region outlines':'Show region outlines';
   $('#toggle-regions').setAttribute('aria-pressed',String(showRegionOutlines));
-  $('#regions-image').alt=showRegionOutlines?'Lens, source and symmetric background regions':'System image without region outlines';
+  $('#regions-image').alt=showRegionOutlines?'Lens, source, symmetric background and available satellite regions':'System image without region outlines';
   refresh('regions',true);
 };
 $('#toggle-specz').onclick=()=>{

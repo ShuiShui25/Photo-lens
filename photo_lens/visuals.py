@@ -9,25 +9,49 @@ def plot_regions(name):
     from astropy.visualization import ImageNormalize, PercentileInterval, AsinhStretch
     from regions import Regions
     import json
-    cfg = json.loads((ROOT / system_record(name)['model_config']).read_text())
+    record = system_record(name)
+    cfg = json.loads((ROOT / record['model_config']).read_text())
     base = ROOT / '1.lens-modeling' / name
     with fits.open((base / cfg['science_cutout']).resolve()) as h:
         data = np.asarray(h[cfg['science_hdu']].data, float)
         wcs = WCS(h[cfg['science_hdu']].header).celestial
-    fig, ax = plt.subplots(figsize=(8, 7), subplot_kw={'projection':wcs})
+    # WCS tick-label extents can make tight_layout collapse the plotting area
+    # for some sky positions. Reserve fixed space for axes and an outer legend.
+    fig, ax = plt.subplots(figsize=(8, 8), subplot_kw={'projection':wcs})
+    fig.subplots_adjust(left=0.17, right=0.97, bottom=0.14, top=0.84)
     ax.imshow(data, origin='lower', cmap='gray', norm=ImageNormalize(data, interval=PercentileInterval(99.5), stretch=AsinhStretch()))
     folder = ROOT / '2.region-detection/regions' / name
     from matplotlib.lines import Line2D
-    handles, outlines = [], []
-    for kind, color, label in [('lens','#ff75cc','Lens'),('source','#4ceaff','Source'),('background','#ffd166','Symmetric background')]:
-        for region in Regions.read(folder / f'{name}_{kind}_point_fraction040.reg', format='ds9'):
-            outlines.append(region.to_pixel(wcs).plot(ax=ax, facecolor='none', edgecolor=color, linewidth=2))
+    handles, outlines, pixel_regions = [], [], []
+    selections = [(folder / f'{name}_{kind}_point_fraction040.reg', color, label)
+                  for kind, color, label in [('lens','#ff75cc','Lens'),('source','#4ceaff','Source'),('background','#ffd166','Symmetric background')]]
+    satellite_path = folder / f'{name}_satellites_point_fraction.reg'
+    if satellite_path.is_file():
+        selections.append((satellite_path, '#ff675f', 'Satellite'))
+    for path, color, label in selections:
+        regions = list(Regions.read(path, format='ds9'))
+        if not regions:
+            continue
+        for region in regions:
+            pixel_region = region.to_pixel(wcs)
+            pixel_regions.append(pixel_region)
+            outlines.append(pixel_region.plot(ax=ax, facecolor='none', edgecolor=color, linewidth=2))
         handles.append(Line2D([0],[0],color=color,label=label,lw=2))
-    x,y = wcs.world_to_pixel_values(system_record(name)['ra'], system_record(name)['dec'])
-    ax.set_xlim(x-35,x+35);ax.set_ylim(y-35,y+35)
-    ax.set_xlabel('Right ascension');ax.set_ylabel('Declination');ax.set_title(name)
-    legend = ax.legend(handles=handles,loc='upper right',facecolor='#172033',labelcolor='white')
-    fig.tight_layout();fig.savefig(folder / f'{name}_regions.png',dpi=170)
+    x,y = wcs.world_to_pixel_values(record['ra'], record['dec'])
+    half_size = 35.0
+    for region in pixel_regions:
+        box = region.bounding_box
+        half_size = max(half_size, abs(box.ixmin-x)+4, abs(box.ixmax-x)+4,
+                        abs(box.iymin-y)+4, abs(box.iymax-y)+4)
+    ax.set_xlim(x-half_size,x+half_size);ax.set_ylim(y-half_size,y+half_size)
+    for coordinate in ax.coords:
+        coordinate.set_ticks(number=4)
+        coordinate.set_ticklabel(size=10, exclude_overlapping=True)
+    ax.set_xlabel('Right ascension');ax.set_ylabel('Declination')
+    fig.suptitle(name, y=0.98)
+    legend = fig.legend(handles=handles, loc='upper center', bbox_to_anchor=(0.55,0.945),
+                        ncol=2, facecolor='#172033', labelcolor='white', fontsize=10)
+    fig.savefig(folder / f'{name}_regions.png',dpi=170)
     for outline in outlines:
         outline.set_visible(False)
     legend.set_visible(False)
