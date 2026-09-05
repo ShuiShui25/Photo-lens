@@ -1,0 +1,69 @@
+{
+  "analysis_backend": "jax",
+  "constraints": {
+    "image_positions_yx_arcsec": [
+      [
+        0.468204,
+        0.96471
+      ],
+      [
+        -1.198357,
+        -2.317328
+      ]
+    ],
+    "mask_centre_yx_arcsec": [
+      -0.015424,
+      0.009289
+    ],
+    "mask_radius_arcsec": 3.2,
+    "oversampling_centre_yx_arcsec": [
+      -0.015424,
+      0.009289
+    ],
+    "oversampling_enabled": true,
+    "positions_file": "/home/geng/Codes/Photo-lens/data/bb/J022511-045433/positions_gui.txt",
+    "positions_threshold_arcsec": 0.5,
+    "satellite_positions_yx_arcsec": [
+      [
+        -0.958851,
+        1.899399
+      ]
+    ]
+  },
+  "jax_requested": true,
+  "log_evidence": {
+    "stage1": 2743.525415712804,
+    "stage2": 2820.5626490216787,
+    "stage3": 2955.6714382142823
+  },
+  "pipeline_revision": "photo_lens_unified_hsc_cfht_cbz_v1",
+  "reduced_chi_squared": {
+    "stage1": 1.8095075780947527,
+    "stage2": 1.8092203252566017,
+    "stage3": 1.5378525404896786
+  },
+  "stages": {
+    "1": {
+      "mass": "Isothermal (SIE)",
+      "source_mge": 10
+    },
+    "2": {
+      "mass": "elliptical PowerLaw",
+      "source_mge": 10
+    },
+    "3": {
+      "mass": "elliptical PowerLaw",
+      "source_mge": "2x10 independent-centre"
+    }
+  },
+  "system": "J022511-045433",
+  "wcs_products": {
+    "centre": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products/J022511-045433_lens_light_centre_wcs.json",
+    "intrinsic": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products/J022511-045433_lens_light_intrinsic_wcs.fits",
+    "manifest": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products/J022511-045433_wcs_product_manifest.json",
+    "mge_components": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products/J022511-045433_lens_mge_components_wcs.fits",
+    "model": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products/J022511-045433_lens_light_model_wcs.fits",
+    "qa": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products/J022511-045433_wcs_product_qa.json",
+    "reduced": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products/J022511-045433_lens_light_reduced_wcs.fits"
+  }
+}

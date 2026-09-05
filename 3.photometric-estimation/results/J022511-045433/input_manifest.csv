@@ -1,0 +1,6 @@
+role,relative_path,sha256,mtime,size_bytes
+catalogue,data/catalogue/targets.csv,036b7fa283e08ee04c5d10fb07e11313374654b64a94dbd9072416ac54cc7b22,2026-09-05T06:24:45.141205311+00:00,858
+source_region,2.region-detection/regions/J022511-045433/J022511-045433_source_point_fraction040.reg,ee38c2ef27304ebc20391da1d9dba63e4471b3e7dcd7e9851ff1678189fe9e1e,2026-09-05T07:04:57.419918060+00:00,607
+background_region,2.region-detection/regions/J022511-045433/J022511-045433_background_point_fraction040.reg,4dbcf41bc1529f9b747b136aba07c0a3eb4fd1596e8cbde8704695400dee5708,2026-09-05T07:04:57.421365499+00:00,610
+lens_region,2.region-detection/regions/J022511-045433/J022511-045433_lens_point_fraction040.reg,0a1f5f77c8a8383b5d9d9c282aaf81d2f85f03d300fb2e8fa5a07d0b2fb9c6b7,2026-09-05T07:04:57.420684099+00:00,703
+nb_aperture_centre_table,3.photometric-estimation/nb-centres/J022511-045433/J022511-045433_nb_antisymmetry_centres.csv,2f29559a2ad3995832ef31d52f323545995aa8bb2e43dffb87b11fe6a853c8e5,2026-09-05T06:16:23.562592030+00:00,19285

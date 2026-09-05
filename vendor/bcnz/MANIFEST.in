@@ -1,3 +1,3 @@
 recursive-include bcnz/data/photoz *
-include LICENCE.TXT LOCAL_MODIFICATIONS.md
+include LICENCE.TXT
 recursive-include bcnz *.pyx *.h

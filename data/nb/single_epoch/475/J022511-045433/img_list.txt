@@ -1,0 +1,6 @@
+PAUS_crossmatch_cutouts_single_epoch_extra_tmp/red_NightlyR11.paucam.10579.0225.-458.FT_NB455_NB525.2467247.std.03.fits
+PAUS_crossmatch_cutouts_single_epoch_extra_tmp/red_NightlyR11.paucam.23762.0225.-458.FT_NB455_NB525.2622255.std.03.fits
+PAUS_crossmatch_cutouts_single_epoch_extra_tmp/red_NightlyR11.paucam.23792.0225.-458.FT_NB455_NB525.2622285.std.03.fits
+PAUS_crossmatch_cutouts_single_epoch_extra_tmp/red_NightlyR11.paucam.23793.0226.-458.FT_NB455_NB525.2622286.std.03.fits
+PAUS_crossmatch_cutouts_single_epoch_extra_tmp/red_NightlyR11.paucam.10840.0226.-458.FT_NB455_NB525.2467508.std.03.fits
+PAUS_crossmatch_cutouts_single_epoch_extra_tmp/red_NightlyR11.paucam.23763.0226.-458.FT_NB455_NB525.2622256.std.03.fits

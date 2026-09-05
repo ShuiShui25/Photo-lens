@@ -1,9 +1,0 @@
-{
-  "status": "passed",
-  "python": "3.10.19 | packaged by conda-forge | (main, Jan 26 2026, 23:45:08) [GCC 14.3.0]",
-  "bcnz": "/tmp/photo-lens-clone-6t5hFh/env/lib/python3.10/site-packages/bcnz/__init__.py",
-  "system": 12,
-  "bands": 45,
-  "elapsed_seconds": 30.357130765914917,
-  "scope": "real image photometry and BCNz; frozen regions; z stride 20; no GPU modeling"
-}

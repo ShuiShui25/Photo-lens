@@ -1,3 +1,0 @@
-PAUS_crossmatch_cutouts_single_epoch_extra_tmp/red_NightlyR11.paucam.17956.1405.5208.FT_NB775_NB845.2528189.std.05.fits
-PAUS_crossmatch_cutouts_single_epoch_extra_tmp/red_NightlyR11.paucam.15596.1405.5205.FT_NB775_NB845.2525875.std.05.fits
-PAUS_crossmatch_cutouts_single_epoch_extra_tmp/red_NightlyR11.paucam.19702.1406.5207.FT_NB775_NB845.2529955.std.05.fits

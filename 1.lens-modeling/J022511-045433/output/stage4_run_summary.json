@@ -1,0 +1,85 @@
+{
+  "analysis_backend": "jax",
+  "autofit_number_of_cores": 1,
+  "fit_preview": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/stage_previews/stage4_fit.png",
+  "jax_platform": "gpu",
+  "likelihood_schema": "imaging_figure_of_merit_v1",
+  "log_evidence": 2720.653143868141,
+  "nautilus_n_batch": 5,
+  "pipeline_revision": "photo_lens_unified_hsc_cfht_cbz_v1",
+  "posterior_transfer": {
+    "dimensions": 20,
+    "manifest": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/stage3_to_stage4_posterior.json",
+    "method": "weighted_empirical_marginals_plus_gaussian_copula",
+    "parameters": [
+      "galaxies.lens.bulge.profile_list.29.centre.centre_0",
+      "galaxies.lens.bulge.profile_list.29.centre.centre_1",
+      "galaxies.lens.bulge.profile_list.14.ell_comps.ell_comps_0",
+      "galaxies.lens.bulge.profile_list.14.ell_comps.ell_comps_1",
+      "galaxies.lens.bulge.profile_list.29.ell_comps.ell_comps_0",
+      "galaxies.lens.bulge.profile_list.29.ell_comps.ell_comps_1",
+      "galaxies.lens.mass.centre.centre_0",
+      "galaxies.lens.mass.centre.centre_1",
+      "galaxies.lens.mass.ell_comps.ell_comps_0",
+      "galaxies.lens.mass.ell_comps.ell_comps_1",
+      "galaxies.lens.mass.einstein_radius",
+      "galaxies.lens.mass.slope",
+      "galaxies.lens.shear.gamma_1",
+      "galaxies.lens.shear.gamma_2",
+      "galaxies.satellite_0.bulge.profile_list.29.centre.centre_0",
+      "galaxies.satellite_0.bulge.profile_list.29.centre.centre_1",
+      "galaxies.satellite_0.bulge.profile_list.14.ell_comps.ell_comps_0",
+      "galaxies.satellite_0.bulge.profile_list.14.ell_comps.ell_comps_1",
+      "galaxies.satellite_0.bulge.profile_list.29.ell_comps.ell_comps_0",
+      "galaxies.satellite_0.bulge.profile_list.29.ell_comps.ell_comps_1"
+    ]
+  },
+  "reduced_chi_squared": 1.3875979208679337,
+  "settings_inversion": {
+    "maxiter": 250,
+    "no_regularization_add_to_curvature_diag_value": 0.001,
+    "positive_only_uses_p_initial": true,
+    "tolerance": 1e-08,
+    "use_border_relocator": true,
+    "use_positive_only_solver": true,
+    "use_source_loop": false,
+    "use_w_tilde_numpy": false
+  },
+  "source": {
+    "adapt_image": "stage3 galaxies.source model image (image plane)",
+    "coefficient_zeroth_prior": {
+      "lower_limit": 0.1,
+      "type": "LogUniformPrior",
+      "upper_limit": 100.0
+    },
+    "mesh": "RectangularUniform",
+    "regularization": "ConstantPlusBrightnessZeroth",
+    "regularization_prior": {
+      "lower_limit": 0.001,
+      "type": "LogUniformPrior",
+      "upper_limit": 10000.0
+    },
+    "shape": [
+      20,
+      20
+    ],
+    "signal_scale": 0.5,
+    "type": "pixelization"
+  },
+  "stage": 4,
+  "stage4_regularization_revision": "clipsig1",
+  "system": "J022511-045433",
+  "upstream_stage3": {
+    "identifier": "386eef5dffa390f07f791509d3020d4d",
+    "search_name": "stage3_double_source_jpf78a399789_5a904fda86"
+  },
+  "wcs_products": {
+    "centre": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_centre_wcs.json",
+    "intrinsic": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_intrinsic_wcs.fits",
+    "manifest": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_wcs_product_manifest.json",
+    "mge_components": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_mge_components_wcs.fits",
+    "model": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_model_wcs.fits",
+    "qa": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_wcs_product_qa.json",
+    "reduced": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_reduced_wcs.fits"
+  }
+}

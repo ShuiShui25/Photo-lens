@@ -1,0 +1,28 @@
+{
+  "autolens_x_arcsec": 0.04906398290245878,
+  "autolens_y_arcsec": -0.11226807348476729,
+  "convolved_model_centroid_fits_yx": [
+    213.34808808652198,
+    214.5846268173222
+  ],
+  "dec_deg": -4.909349957670878,
+  "fits_x_pixel_zero_indexed": 214.79204751727653,
+  "fits_y_pixel_zero_indexed": 213.33173765782877,
+  "intrinsic_model_centroid_fits_yx": [
+    213.3303545336163,
+    214.79391336232894
+  ],
+  "mapping_schema": "autolens-y-up_to_fits-row-up-v2",
+  "psf_centroid_offset_fits_yx_pix": [
+    0.01773355250073294,
+    -0.2092865447796406
+  ],
+  "psf_centroid_offset_model_yx_pix": [
+    -0.01773355250073294,
+    -0.2092865447796406
+  ],
+  "ra_deg": 36.295997592682944,
+  "reduced_image_definition": "science data minus full-detector PSF-convolved stage-3 lens-plane light model",
+  "stage": 3,
+  "system": "J022511-045433"
+}

@@ -1,0 +1,20 @@
+{
+  "mapping_schema": "autolens-y-up_to_fits-row-up-v2",
+  "mge_schema": "lens-mge-v2-seven-column-full-detector",
+  "products": {
+    "centre": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_centre_wcs.json",
+    "intrinsic": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_intrinsic_wcs.fits",
+    "mge_components": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_mge_components_wcs.fits",
+    "model": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_model_wcs.fits",
+    "qa": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_wcs_product_qa.json",
+    "reduced": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_reduced_wcs.fits"
+  },
+  "psf_path": "/home/geng/Codes/Photo-lens/data/bb/J022511-045433/psf/HSC-G.fits",
+  "psf_sha256": "d9ffd3ac10aa63e96c671f7618e29b980fce8f82f5b8baeae3e8de640bec1143",
+  "science_path": "/home/geng/Codes/Photo-lens/data/bb/J022511-045433/science/HSC-G.fits",
+  "science_sha256": "df83b1c96820e9bd196de28b73fc49f38b0d5a7057dcdf2d83bbdb1375dcab60",
+  "stage": 4,
+  "system": "J022511-045433",
+  "tracer_path": null,
+  "tracer_sha256": null
+}

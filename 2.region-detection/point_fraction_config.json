@@ -1,0 +1,8 @@
+{
+  "source_sextractor_overrides": {
+    "J022511-045433": {
+      "fixed_detect_sigma": 4.0,
+      "grow_sigma_ratio": 0.75
+    }
+  }
+}

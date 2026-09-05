@@ -1,2 +1,0 @@
-lens_id,nb_weight,tag,p_source_gt_lens,definition,strict_inequality,redshift_grid_points
-3110,1.0,wNB1,0.8099672935540899,integral dz_l p_l(z_l) integral_{z_l}^infinity dz_s p_s(z_s),True,1991

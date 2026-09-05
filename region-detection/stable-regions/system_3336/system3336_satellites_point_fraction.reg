@@ -1,4 +1,0 @@
-# Region file format: DS9 version 4.1
-global color=green dashlist=8 3 width=1 font="helvetica 10 normal roman" select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1
-fk5
-polygon(35.94164988,-5.57198171,35.94169677,-5.57198169,35.94176712,-5.57205166,35.94176718,-5.57219165,35.94164999,-5.57226169,35.94160310,-5.57226171,35.94153275,-5.57219175,35.94153269,-5.57205175,35.94164988,-5.57198171) # color=red text={satellite_exclusion}

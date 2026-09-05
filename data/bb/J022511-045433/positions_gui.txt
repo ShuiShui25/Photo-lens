@@ -1,0 +1,34 @@
+# Positions marked by mark_positions_gui.py
+# FITS image: science/HSC-G.fits
+# Image source: HSC
+# Pixel scale: 0.168 arcsec/pixel
+# Mask radius: 3.2 arcsec
+# Lens light centre: (-0.015423631396271049, 0.009289362219402847)
+# Coordinates are (y, x) in arcsec, ready for PyAutoLens.
+# Pixel coordinates are zero-indexed (row, col) = (y, x) in pixels.
+
+MASK_RADIUS = 3.200000
+LENS_LIGHT_CENTRE = (-0.015424, 0.009289)
+PIXEL_LENS_LIGHT_CENTRE = (214, 215)
+PIXEL_LENS_LIGHT_CENTRE_FLOAT = (213.908193, 214.555294)
+LENS_LIGHT_CENTRE_METHOD = 'variance_weighted_point_antisymmetry_minimum'
+LENS_LIGHT_CENTRE_ANTISYMMETRY_CHI2_PER_PIXEL = 71.8855390277
+LENS_LIGHT_CENTRE_ANTISYMMETRY_RADII_PIX = (1.500000, 4.526615)
+
+IMAGE_POSITIONS = [
+    (0.468204, 0.964710),
+    (-1.198357, -2.317328),
+]
+
+SATELLITE_POSITIONS = [
+    (-0.958851, 1.899399),
+]
+
+PIXEL_IMAGE_POSITIONS = [
+    (217, 220),
+    (207, 201),
+]
+
+PIXEL_SATELLITE_POSITIONS = [
+    (208, 226),
+]

@@ -1,0 +1,22 @@
+[
+  {
+    "stage": 1,
+    "chi_squared": 2064.648146606063,
+    "reduced_chi_squared": 1.8095075780947092
+  },
+  {
+    "stage": 2,
+    "chi_squared": 2064.3203911178307,
+    "reduced_chi_squared": 1.809220325256644
+  },
+  {
+    "stage": 3,
+    "chi_squared": 1754.68974869876,
+    "reduced_chi_squared": 1.5378525404897108
+  },
+  {
+    "stage": 4,
+    "chi_squared": 1583.2492277104627,
+    "reduced_chi_squared": 1.3875979208680655
+  }
+]

@@ -5,9 +5,7 @@ __pycache__/
 build/
 dist/
 .venv*/
-runs/
-.validation/
-/data/
-/photometric-estimation/model/
-/photometric-estimation/hsc-g-response/model-g/
+.runtime/
 *.log
+*.local.json
+.ipynb_checkpoints/

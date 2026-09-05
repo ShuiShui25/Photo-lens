@@ -1,0 +1,51 @@
+{
+  "type": "instance",
+  "class_path": "autofit.non_linear.search.nest.nautilus.search.Nautilus",
+  "arguments": {
+    "path_prefix": {
+      "type": "path",
+      "path": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output_gband"
+    },
+    "iterations_per_quick_update": 1e+99,
+    "seed": null,
+    "n_like_new_bound": null,
+    "number_of_cores": 1,
+    "iterations_per_full_update": 1e+99,
+    "split_threshold": 100,
+    "n_live": 75,
+    "paths": {
+      "type": "instance",
+      "class_path": "autofit.non_linear.paths.directory.DirectoryPaths",
+      "arguments": {
+        "path_prefix": {
+          "type": "path",
+          "path": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output_gband"
+        },
+        "is_identifier_in_paths": true,
+        "identifier": "fc2f6e3af886b5f36db7145b008fdca3",
+        "image_path_suffix": "",
+        "name": "stage2_powerlaw_jpb88ddf4310_5a904fda86",
+        "parent": null,
+        "unique_tag": null
+      }
+    },
+    "inplace": false,
+    "n_networks": 4,
+    "n_points_min": null,
+    "n_update": null,
+    "initial_values": {
+      "type": "dict",
+      "arguments": {}
+    },
+    "initializer": {
+      "type": "instance",
+      "class_path": "autofit.non_linear.initializer.InitializerPrior",
+      "arguments": {}
+    },
+    "name": "stage2_powerlaw_jpb88ddf4310_5a904fda86",
+    "n_shell": 1,
+    "unique_tag": null,
+    "enlarge_per_dim": 1.1,
+    "n_eff": 100
+  }
+}

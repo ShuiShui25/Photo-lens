@@ -1,0 +1,7 @@
+{
+  "nb_weight": 1.0,
+  "system_band_exclusions": {},
+  "aperture_subpixels": 81,
+  "convergence_subpixels": 161,
+  "nb_centre_max_shift_arcsec": 0.15
+}

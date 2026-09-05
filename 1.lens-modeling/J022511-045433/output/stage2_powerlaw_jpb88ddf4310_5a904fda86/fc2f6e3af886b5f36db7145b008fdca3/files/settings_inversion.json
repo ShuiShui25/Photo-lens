@@ -1,0 +1,14 @@
+{
+  "type": "instance",
+  "class_path": "autoarray.inversion.inversion.settings.SettingsInversion",
+  "arguments": {
+    "use_positive_only_solver": true,
+    "use_source_loop": false,
+    "use_border_relocator": true,
+    "use_w_tilde_numpy": false,
+    "maxiter": 250,
+    "positive_only_uses_p_initial": true,
+    "no_regularization_add_to_curvature_diag_value": 0.001,
+    "tolerance": 1e-08
+  }
+}
