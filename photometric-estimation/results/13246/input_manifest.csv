@@ -1,0 +1,6 @@
+role,relative_path,sha256,mtime,size_bytes
+catalogue,data/catalogue/PAUS_lenses_crossmatch_v3_SG.csv,ec62731a658de89820693ba7f4de5301c9d047d8b33daef08bdc8081b5f654ff,2026-08-31T11:03:15.143336535+00:00,21056
+source_region,region-detection/source-parameter-transfer-3441/regions/system_13246/system13246_source_point_fraction040.reg,c4d52d8ce49c8c9a47d0130dc664da33c5cf63f0f968f748b53a20cc449c79a0,2026-08-31T15:00:11.592726946+00:00,947
+background_region,region-detection/source-parameter-transfer-3441/regions/system_13246/system13246_background_point_fraction040.reg,f1686531324d95e85ebf87158c93e7a7c5ddca6f6251afc156cac1d70d224f4a,2026-08-31T15:00:11.594773054+00:00,950
+lens_region,region-detection/source-parameter-transfer-3441/regions/system_13246/system13246_lens_point_fraction040.reg,0ac49bdaaa716efb6e8cb196ccaeeb894c9f36bef4916c6a6cb5ddd0e8c000da,2026-08-31T15:00:11.593634367+00:00,722
+nb_aperture_centre_table,photometric-estimation/nb-centres/system_13246/system13246_nb_antisymmetry_centres.csv,2952aa48c9e3dc243bcaf70731b21252a2ef06379dad0883742aa593cad23575,2026-08-31T09:24:35.871760845+00:00,6737

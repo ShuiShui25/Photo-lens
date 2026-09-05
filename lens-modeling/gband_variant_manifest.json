@@ -1,0 +1,59 @@
+{
+  "8": {
+    "baseline_band": "HSC-R",
+    "g_band": "HSC-G",
+    "baseline_reduced_chi_squared": {
+      "stage1": 3.3702440070948994,
+      "stage2": 3.363109439453138,
+      "stage3": 2.856085253919635,
+      "stage4": 2.6385047906956145
+    },
+    "gband_reduced_chi_squared": {
+      "stage1": 1.8095075780947527,
+      "stage2": 1.8092203252566017,
+      "stage3": 1.5378525404896786,
+      "stage4": 1.3875979208679337
+    },
+    "gband_regularization": "ConstantPlusBrightnessZeroth",
+    "gband_signal_scale": 0.5,
+    "gband_jax_platform": "gpu"
+  },
+  "12": {
+    "baseline_band": "CFHT-R",
+    "g_band": "CFHT-G",
+    "baseline_reduced_chi_squared": {
+      "stage1": 0.8608993461682757,
+      "stage2": 0.8595216842530453,
+      "stage3": 0.8326850463022776,
+      "stage4": 0.7865891673670558
+    },
+    "gband_reduced_chi_squared": {
+      "stage1": 1.0275213111046568,
+      "stage2": 1.0264845404075105,
+      "stage3": 1.019287595912137,
+      "stage4": 1.0013280440643961
+    },
+    "gband_regularization": "ConstantPlusBrightnessZeroth",
+    "gband_signal_scale": 0.5,
+    "gband_jax_platform": "gpu"
+  },
+  "3336": {
+    "baseline_band": "HSC-R",
+    "g_band": "HSC-G",
+    "baseline_reduced_chi_squared": {
+      "stage1": 1.2293334250865378,
+      "stage2": 1.2295569902602956,
+      "stage3": 1.1773711415634394,
+      "stage4": 1.1493596556179415
+    },
+    "gband_reduced_chi_squared": {
+      "stage1": 1.0240782445262966,
+      "stage2": 1.021940653119169,
+      "stage3": 1.0148063741713893,
+      "stage4": 0.9605940064071433
+    },
+    "gband_regularization": "ConstantPlusBrightnessZeroth",
+    "gband_signal_scale": 0.5,
+    "gband_jax_platform": "gpu"
+  }
+}

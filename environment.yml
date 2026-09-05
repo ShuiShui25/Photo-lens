@@ -1,0 +1,10 @@
+name: photo-lens
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - pip
+  - c-compiler
+  - source-extractor
+  - pip:
+      - -r requirements.txt

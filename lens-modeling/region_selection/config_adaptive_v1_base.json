@@ -1,0 +1,52 @@
+{
+  "selection": {
+    "analysis_half_size_pix": 30,
+    "min_area_pix": 5,
+    "subtract_lens_region_from_source": true,
+    "ranking": "area * (1 - point_symmetric_overlap_fraction)^2"
+  },
+  "sextractor": {
+    "lens": {
+      "input_mode": "snr",
+      "detect_snr_floor": 3.0,
+      "detect_peak_fraction": 0.35,
+      "detect_minarea": 5,
+      "deblend_nthresh": 32,
+      "deblend_mincont": 0.001,
+      "back_size": 16
+    },
+    "source": {
+      "input_mode": "snr",
+      "detect_snr_floor": 0.5,
+      "detect_peak_fraction": 0.29,
+      "detect_minarea": 5,
+      "deblend_nthresh": 32,
+      "deblend_mincont": 0.001,
+      "back_size": 16
+    }
+  },
+  "scarlet2": {
+    "lens": {
+      "peak_smoothing_sigma_pix": 1.0,
+      "peak_min_distance_pix": 3,
+      "peak_snr": 3.0,
+      "max_sources": 1,
+      "morphology_half_size_pix": 12,
+      "max_iter": 100,
+      "relative_tolerance": 0.00001,
+      "footprint_snr": 3.0,
+      "footprint_peak_fraction": 0.35
+    },
+    "source": {
+      "peak_smoothing_sigma_pix": 1.0,
+      "peak_min_distance_pix": 4,
+      "peak_snr": 3.0,
+      "max_sources": 8,
+      "morphology_half_size_pix": 10,
+      "max_iter": 100,
+      "relative_tolerance": 0.00001,
+      "footprint_snr": 0.5,
+      "footprint_peak_fraction": 0.26
+    }
+  }
+}

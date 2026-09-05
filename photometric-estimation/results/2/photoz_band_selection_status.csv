@@ -1,0 +1,46 @@
+band,kind,source_usable,lens_usable,effective_common,exclusion_reason
+NB455,NB,True,True,True,
+NB465,NB,True,True,True,
+NB475,NB,True,True,True,
+NB485,NB,True,True,True,
+NB495,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB505,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB515,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB525,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB535,NB,True,True,True,
+NB545,NB,True,True,True,
+NB555,NB,True,True,True,
+NB565,NB,True,True,True,
+NB575,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB585,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB595,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB605,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB615,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB625,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB635,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB645,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB655,NB,True,True,True,
+NB665,NB,True,True,True,
+NB675,NB,True,True,True,
+NB685,NB,True,True,True,
+NB695,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB705,NB,False,False,False,source missing/non-finite/error<=0; lens missing/non-finite/error<=0
+NB715,NB,True,True,True,
+NB725,NB,True,True,True,
+NB735,NB,True,True,True,
+NB745,NB,True,True,True,
+NB755,NB,True,True,True,
+NB765,NB,True,True,True,
+NB775,NB,True,True,True,
+NB785,NB,True,True,True,
+NB795,NB,True,True,True,
+NB805,NB,True,True,True,
+NB815,NB,True,True,True,
+NB825,NB,True,True,True,
+NB835,NB,True,True,True,
+NB845,NB,True,True,True,
+subaru_g,BB,True,True,True,
+subaru_r,BB,True,True,True,
+subaru_i,BB,True,True,True,
+subaru_z,BB,True,True,True,
+subaru_y,BB,True,True,True,

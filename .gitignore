@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*.so
+*.egg-info/
+build/
+dist/
+.venv*/
+runs/
+.validation/
+/data/
+/photometric-estimation/model/
+/photometric-estimation/hsc-g-response/model-g/
+*.log

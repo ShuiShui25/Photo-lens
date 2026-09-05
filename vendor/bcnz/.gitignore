@@ -1,0 +1,11 @@
+.project
+.pydevproject
+*.pyc
+*.swp
+*-e
+.settings/
+bcnz.egg-info/
+build/
+dist/
+.ipynb_checkpoints/*
+.DS_Store

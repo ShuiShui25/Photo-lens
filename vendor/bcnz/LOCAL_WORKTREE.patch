@@ -1,0 +1,73 @@
+diff --git a/LOCAL_MODIFICATIONS.md b/LOCAL_MODIFICATIONS.md
+index 9c6f7e3..e6b0957 100644
+--- a/LOCAL_MODIFICATIONS.md
++++ b/LOCAL_MODIFICATIONS.md
+@@ -29,7 +29,7 @@
+   - 比较修改前后的结果时，应使用新的输出目录或清除对应运行的输入 catalogue、
+     中间结果和 photo-z 输出，避免静默复用旧结果。
+   - 此修改不会自动改变已经写入磁盘的 parquet/CSV 文件；必须重新执行调用
+-    `load_coadd_file()` 的流程。
++  `load_coadd_file()` 的流程。
+ 
+ ## 2026-06-21：修复 best-run 选择和输出 best model 与实际拟合不一致
+ 
+@@ -60,3 +60,28 @@
+   - `minimize_all_z()` 的内部返回值由两个增加为三个；本仓库内唯一调用方
+     `photoz()` 已同步更新。
+   - 已保存的 `pzcat_*.pq` 不会自动更新，必须重新运行 photo-z。
++
++## 2026-08-09：以最小 chi-square 平移 p(z) 指数，避免 odds 下溢
++
++- 修改文件：`bcnz/fit/libpzqual.py`
++- 修改函数：`get_pzcat()`
++- 修改内容：将
++
++  ```python
++  pz = np.exp(-0.5 * chi2)
++  ```
++
++  改为
++
++  ```python
++  chi2_min = chi2.min(dim=['run', 'z'])
++  pz = np.exp(-0.5 * (chi2 - chi2_min))
++  ```
++
++- 修改原因：当同一对象在全部 run/z 点的 chi-square 都很大时，原指数可全部下溢为
++  零；后续 clipped normalization 无法恢复相对似然，进而使 p(z)、odds 和 width 失真。
++- 数学性质：对每个 `ref_id` 减去同一个 `chi2_min`，只给所有未归一化 likelihood
++  乘同一常数。因此在不下溢时，归一化 p(z)、`zb`、odds、best run 严格不变；最大
++  指数项恒为 `exp(0)=1`，从而避免全零下溢。
++- 影响范围：所有调用本地 BCNz `get_pzcat()` 的分析均采用该稳定计算；旧 parquet 或
++  p(z) 输出不能与新结果混用，必须重新执行。
+diff --git a/bcnz/fit/libpzqual.py b/bcnz/fit/libpzqual.py
+index aac35ab..d1a13f0 100644
+--- a/bcnz/fit/libpzqual.py
++++ b/bcnz/fit/libpzqual.py
+@@ -167,7 +167,11 @@ def get_pzcat(chi2, odds_lim, width_frac):
+            width_frac (float): Parameter in the pz_width calculation.
+     """
+ 
+-    pz = np.exp(-0.5*chi2)
++    # A ref_id-dependent chi2 shift leaves the normalized posterior unchanged,
++    # but keeps its largest unnormalized value at one.  Without it every
++    # run/z likelihood can underflow to zero and corrupt p(z)-derived odds.
++    chi2_min = chi2.min(dim=['run', 'z'])
++    pz = np.exp(-0.5 * (chi2 - chi2_min))
+     pz_norm = pz.sum(dim=['run', 'z'])
+     pz_norm = pz_norm.clip(1e-200, np.infty)
+ 
+@@ -185,12 +189,11 @@ def get_pzcat(chi2, odds_lim, width_frac):
+     cat.index = pz.ref_id.values
+     cat.index.name = 'ref_id'
+ 
+-    cat['chi2'] = chi2.min(dim=['run', 'z']).sel(ref_id=cat.index)
++    cat['chi2'] = chi2_min.sel(ref_id=cat.index)
+ 
+     # These are now in the "libpzqual" file. I could
+     # consider moving them here..
+     pz_widthx = cat.pz_width.values
+-    chi2_min = chi2.min(dim=['run', 'z'])
+     cat['qual_par'] = (chi2_min*pz_widthx).values
+ 
+     odds0p2 = odds(pz, cat.zb, odds_lim)

@@ -1,0 +1,10 @@
+{
+  "source_spec_z": 1.85,
+  "fixed_grid_z": 1.8499999999999985,
+  "fixed_best_run": 19,
+  "fixed_specz_chi2": 36.08574788044679,
+  "excluded_bands": [
+    "NB535"
+  ],
+  "release": "PHOTO-LENS032"
+}
