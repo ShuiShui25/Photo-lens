@@ -288,7 +288,9 @@ def _jobs(config: PipelineConfig) -> list[ImageJob]:
                 continue
 
         # fixed042-coadd fallback: calibrated science plus inverse-variance map.
-        coadd_dir = config.nb_coadd_dir / band
+        coadd_dir = config.nb_coadd_dir / wave / str(config.lens_id)
+        if not coadd_dir.is_dir():
+            coadd_dir = config.nb_coadd_dir / band
         science = coadd_dir / f"coadd_cutout_{config.lens_id}.fits"
         weight = coadd_dir / f"coadd_cutout_{config.lens_id}.weight.fits"
         if science.is_file() and weight.is_file():

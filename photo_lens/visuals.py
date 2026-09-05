@@ -41,7 +41,8 @@ def plot_photoz(name):
     z = pd.read_csv(folder / 'photoz_redshift_grid.csv').z.to_numpy()
     fig, axes = plt.subplots(2, 1, figsize=(11, 7), sharex=True)
     pfig, pax = plt.subplots(figsize=(10, 4.5))
-    wavelengths={'subaru_g':4770,'subaru_r':6230,'subaru_i':7750,'subaru_z':8900,'subaru_y':9750}
+    wavelengths={'subaru_g':4770,'subaru_r':6230,'subaru_i':7750,'subaru_z':8900,'subaru_y':9750,
+                 'cfht_u':3740,'cfht_g':4870,'cfht_r':6250,'cfht_i':7670,'cfht_z':9150}
     for ax,target,color in zip(axes,['lens','source'],['#3564b5','#bd6544']):
         pulls = pd.read_csv(folder / f'wNB1/signed_pulls_{target}.csv')
         wave=np.array([int(b.replace('pau_nb',''))*10 if b.startswith('pau_nb') else wavelengths[b] for b in pulls.band])

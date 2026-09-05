@@ -78,11 +78,24 @@ To specify the photometry interpreter or SExtractor explicitly, pass `--photo-py
 | `1.lens-modeling/` | AutoLens implementation, example configuration, models, and modeling plots |
 | `2.region-detection/` | Detection algorithms, DS9 regions, and region plots |
 | `3.photometric-estimation/` | Photometry implementation, native BCNz model caches, fluxes, and p(z) results |
-| `config/systems.json` | Systems available in the dashboard |
+| `config/systems.json` | Metadata for bundled systems; local systems are also discovered from `data/bb/` |
 | `config/photometry.json` | Photometry and band settings |
 | `vendor/bcnz/` | Bundled BCNz source code and license |
 
-See the [Combined lens catalogue](catalogue/Combined_lens_info_V2_filtered_zs_lt2_field.html) for reference information. The dashboard's system list is configured in `config/systems.json`; adding a system also requires its corresponding data and models.
+See the [Combined lens catalogue](catalogue/Combined_lens_info_V2_filtered_zs_lt2_field.html) for reference information. The local backend discovers named system directories under `data/bb/` on each system-list request. The dashboard refreshes the list every 10 seconds while visible; you can also click **Refresh systems**. Static HTML previews only show the bundled system list.
+
+For a local system, use its astronomical name consistently:
+
+- `data/bb/<name>/`: `science/`, `psf/`, `variance/` or `weight/`, and `positions_gui.txt`.
+- `data/nb/single_epoch/<wavelength>/<name>/`: exposure FITS files, `img_list.txt`, exposure times, and zero-point calibration tables.
+- `data/nb/coadd/<wavelength>/<name>/`: `coadd_cutout_<name>.fits` and its `.weight.fits` companion.
+- `data/bb/<name>/catalogue.csv`: matching catalogue rows; the existing `lens_id` column stores the system name.
+- `data/bb/<name>/model_config.json`: explicit AutoLens settings, including redshifts, image HDUs, and pixel scale. Paths are relative to `1.lens-modeling/<name>/`, where the configuration is copied when modeling starts.
+- Optional `data/bb/<name>/system.json`, `mugshot.png`, and `nb_antisymmetry_centres.csv` provide display metadata, a thumbnail, and existing NB centre corrections. `system.json` can specify `field`, `ra`, `dec`, `lens_redshift`, `source_redshift`, and `excluded_bands`.
+
+Discovery does not execute any analysis. New systems without saved models start with **Fit model & plot**; subsequent stages become available when their prerequisites exist. Missing results are shown as not yet run. New systems need their own modeling configuration rather than inheriting the example's scientific parameters.
+
+`.gitignore` keeps additional systems' data and generated products local. Only the bundled **J022511-045433** example is included in Git; code and shared BCNz caches remain tracked.
 
 ### License
 
@@ -166,11 +179,24 @@ python serve.py --model-python /path/to/photo-lens-modeling/bin/python
 | `1.lens-modeling/` | AutoLens 实现、示例配置、模型及建模图 |
 | `2.region-detection/` | 检测算法、DS9 选区和选区图 |
 | `3.photometric-estimation/` | 测光实现、原生 BCNz 模型缓存、flux 和 p(z) 结果 |
-| `config/systems.json` | 总页面中可运行系统的信息 |
+| `config/systems.json` | 随包系统的信息；本地系统还会从 `data/bb/` 自动发现 |
 | `config/photometry.json` | 测光及波段设置 |
 | `vendor/bcnz/` | 随包 BCNz 源码与许可证 |
 
-参考资料见 [Combined lens catalogue](catalogue/Combined_lens_info_V2_filtered_zs_lt2_field.html)。工作流首页的系统列表由 `config/systems.json` 配置；新增系统时需同时准备对应数据和模型。
+参考资料见 [Combined lens catalogue](catalogue/Combined_lens_info_V2_filtered_zs_lt2_field.html)。本地后台每次读取系统列表时都会扫描 `data/bb/` 下以系统名称命名的目录。页面可见时每 10 秒更新一次，也可点击 **Refresh systems**；直接打开静态 HTML 时仅显示随包系统列表。
+
+新增系统时，统一使用天体名称组织数据：
+
+- `data/bb/<name>/`：`science/`、`psf/`、`variance/` 或 `weight/`，以及 `positions_gui.txt`。
+- `data/nb/single_epoch/<波长>/<name>/`：单曝光 FITS、`img_list.txt`、曝光时间及零点标定表。
+- `data/nb/coadd/<波长>/<name>/`：`coadd_cutout_<name>.fits` 及对应 `.weight.fits`。
+- `data/bb/<name>/catalogue.csv`：该系统的目录记录；保留已有的 `lens_id` 列名，但其值使用系统名称。
+- `data/bb/<name>/model_config.json`：该系统的 AutoLens 参数，包括红移、图像 HDU、像素尺度。路径相对于 `1.lens-modeling/<name>/`；启动建模时才会将配置复制到该位置。
+- 可选的 `data/bb/<name>/system.json`、`mugshot.png` 和 `nb_antisymmetry_centres.csv` 分别提供显示信息、缩略图和已有 NB 中心修正。`system.json` 可设置 `field`、`ra`、`dec`、`lens_redshift`、`source_redshift` 和 `excluded_bands`。
+
+自动识别不会启动分析。没有已保存模型的新系统首先显示 **Fit model & plot**；后续模块在前置输入齐全后开放，缺失的结果标为尚未运行。新系统需要自己的建模配置，不会套用示例的科学参数。
+
+`.gitignore` 将后续系统的数据和生成结果保留在本地，仅同步最初的 **J022511-045433** 示例；代码和共享 BCNz 缓存继续由 Git 管理。
 
 ### 许可
 

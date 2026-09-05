@@ -31,10 +31,14 @@ def module_from(path, name):
     return mod
 
 def modeling(name, mode):
+    from photo_lens.discovery import ensure_model_config
+    record = system_record(name)
+    config_path = ensure_model_config(record)
+    if not record['has_model']:
+        mode = 'fit'
     if mode == "render":
         os.environ.setdefault("JAX_PLATFORMS", "cpu")
     base = ROOT / '1.lens-modeling'
-    config_path = base / name / 'config.json'
     command(sys.executable, base / 'autoarray_jax_crop_patch/apply_autoarray_crop_fix.py')
     sys.path.insert(0, str(base))
     if mode == 'fit':
@@ -56,11 +60,14 @@ def modeling(name, mode):
         command(sys.executable, base / 'run_three_stage.py', '--config', search_config, '--jax-platform', platform)
         command(sys.executable, base / 'run_stage4.py', search_config)
         previous = session / 'previous-output'
-        original.output_dir.rename(previous)
+        if original.output_dir.exists():
+            original.output_dir.rename(previous)
+        original.output_dir.parent.mkdir(parents=True, exist_ok=True)
         try:
             (session / 'output').rename(original.output_dir)
         except Exception:
-            previous.rename(original.output_dir)
+            if previous.exists():
+                previous.rename(original.output_dir)
             raise
     # Re-evaluate actual likelihoods from saved tracers, not image-file copies.
     import autolens as al
@@ -100,7 +107,18 @@ def photoz(name):
     sys.path.insert(0, str(ROOT / '3.photometric-estimation'))
     from photometry_engine import PipelineConfig, run_pipeline
     settings = json.loads((ROOT / 'config/photometry.json').read_text())
-    cfg = PipelineConfig(lens_id=name, include_hsc_g=True, aperture_subpixels=settings['aperture_subpixels'], convergence_subpixels=settings['convergence_subpixels'], nb_weights=(float(settings['nb_weight']),), official_nb_weight=float(settings['nb_weight']), nb_aperture_centre_table=ROOT / f'3.photometric-estimation/nb-centres/{name}/{name}_nb_antisymmetry_centres.csv')
+    record = system_record(name)
+    centres = ROOT / f'3.photometric-estimation/nb-centres/{name}/{name}_nb_antisymmetry_centres.csv'
+    if not centres.is_file() and record.get('nb_centre_path'):
+        centres = ROOT / record['nb_centre_path']
+    if not centres.is_file():
+        command(sys.executable, ROOT / '3.photometric-estimation/measure_nb_antisymmetry_centres.py',
+                '--system', name, '--output-root', ROOT / '3.photometric-estimation/nb-centres',
+                '--max-shift-arcsec', settings['nb_centre_max_shift_arcsec'])
+    cfg = PipelineConfig(lens_id=name, field=record['field'], catalog_rel=Path(record['catalogue_path']),
+        include_hsc_g=record['bb_survey']=='HSC', aperture_subpixels=settings['aperture_subpixels'],
+        convergence_subpixels=settings['convergence_subpixels'], nb_weights=(float(settings['nb_weight']),),
+        official_nb_weight=float(settings['nb_weight']), nb_aperture_centre_table=centres)
     result = run_pipeline(cfg)
     from photo_lens.visuals import plot_photoz
     plot_photoz(name)

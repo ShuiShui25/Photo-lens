@@ -22,6 +22,7 @@ import math
 import re
 import shutil
 import tempfile
+import sys
 from pathlib import Path
 
 import matplotlib.pyplot as plt
@@ -45,7 +46,9 @@ HERE = Path(__file__).resolve().parent
 OUTPUT = HERE / "regions"
 SEXTRACTOR = Path(os.environ.get("PHOTO_LENS_SEXTRACTOR") or shutil.which("source-extractor") or "source-extractor")
 MANUAL_ROOT = ROOT / "data/manual-regions"
-SYSTEMS = tuple(item["id"] for item in json.loads((Path(__file__).resolve().parents[1] / "config/systems.json").read_text()))
+sys.path.insert(0, str(ROOT))
+from photo_lens.workflow import available_systems
+SYSTEMS = tuple(item['id'] for item in available_systems())
 THRESHOLD = 0.4
 POINT_CONFIG = json.loads((HERE / "point_fraction_config.json").read_text())
 

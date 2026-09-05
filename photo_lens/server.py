@@ -25,8 +25,11 @@ class Jobs:
         self.stopping = False
 
     def submit(self, name, stage, mode):
-        system_record(name)
+        record = system_record(name)
         if stage not in STAGES or mode not in ('render','fit'): raise ValueError('Invalid stage or mode')
+        if not record.get('can_run', {}).get(stage, True):
+            raise ValueError('Complete the required inputs and preceding stage first. '
+                             + ' '.join(record.get('input_issues', [])))
         with self.lock:
             if self.stopping: raise ValueError('Server is stopping')
             if any(j['system']==name and j['state'] in ('queued','running') for j in self.jobs.values()):

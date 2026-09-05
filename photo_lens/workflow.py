@@ -9,7 +9,8 @@ ROOT = Path(__file__).resolve().parents[1]
 STAGES = ('modeling', 'regions', 'photoz')
 
 def available_systems():
-    return json.loads((ROOT / 'config/systems.json').read_text())
+    from .discovery import discover_systems
+    return discover_systems()
 
 def system_record(name):
     for item in available_systems():

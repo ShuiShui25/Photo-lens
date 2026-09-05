@@ -2,7 +2,7 @@ let systems = window.PHOTO_LENS_SYSTEMS;
 const $ = selector => document.querySelector(selector);
 let token = null, current = null, modelStage = 4, activeJob = null;
 const stages = ['modeling', 'regions', 'photoz'];
-let showRegionOutlines = true, showSpecz = false;
+let showRegionOutlines = true, showSpecz = false, viewedSystem = null;
 function element(tag, className, text) { const node=document.createElement(tag); if(className)node.className=className;if(text!==undefined)node.textContent=text;return node; }
 function gallery() {
   $('#cards').replaceChildren();
@@ -10,16 +10,25 @@ function gallery() {
   for(const system of systems){
     const card=element('a','card');card.href=`#system=${encodeURIComponent(system.id)}`;
     const img=element('img','card-image');img.src=system.mugshot;img.alt=system.id;card.append(img);
-    const body=element('div','card-body'),tags=element('div','tags');for(const t of ['PAUS','HSC'])tags.append(element('span','tag',t));body.append(tags,element('div','card-title',system.id),element('p','',`RA ${system.ra}° · Dec ${system.dec}°`),element('p','',`z lens ${system.lens_redshift} · z source ${system.source_redshift}`));
+    const body=element('div','card-body'),tags=element('div','tags');for(const t of ['PAUS',system.bb_survey||'HSC'])tags.append(element('span','tag',t));body.append(tags,element('div','card-title',system.id),element('p','',`RA ${system.ra}° · Dec ${system.dec}°`),element('p','',`z lens ${system.lens_redshift??'—'} · z source ${system.source_redshift??'—'}`));
     const foot=element('div','card-foot');foot.append(element('span','','Three-stage analysis'),element('span','','Open system →'));body.append(foot);card.append(body);$('#cards').append(card);
   }
 }
-function image(id,path,refresh=false){const url=path+(refresh?`?t=${Date.now()}`:'');$(`#${id}-image`).src=url;$(`#${id}-link`).href=url;}
+function image(id,path,refresh=false,exists=true){
+  const img=$(`#${id}-image`),link=$(`#${id}-link`);
+  let empty=$(`#${id}-empty`);
+  if(!empty){empty=element('p','hint','No result yet. Run the corresponding stage first.');empty.id=`${id}-empty`;link.after(empty);}
+  link.hidden=!exists;empty.hidden=exists;
+  if(!exists){img.removeAttribute('src');link.removeAttribute('href');return;}
+  img.onerror=()=>{link.hidden=true;empty.hidden=false;};
+  img.onload=()=>{link.hidden=false;empty.hidden=true;};
+  const url=path+(refresh?`?t=${Date.now()}`:'');img.src=url;link.href=url;
+}
 function refresh(stage=null,bust=false){
   if(!current)return;const name=current.id;
-  if(!stage||stage==='modeling')image('model',`1.lens-modeling/${name}/output/stage_previews/stage${modelStage}_fit.png`,bust);
-  if(!stage||stage==='regions')image('regions',`2.region-detection/regions/${name}/${name}_regions${showRegionOutlines?'':'_no_outlines'}.png`,bust);
-  if(!stage||stage==='photoz'){image('flux',`3.photometric-estimation/results/${name}/flux.png`,bust);image('pz',`3.photometric-estimation/results/${name}/pz${showSpecz?'_specz':''}.png`,bust);}
+  if(!stage||stage==='modeling')image('model',`1.lens-modeling/${name}/output/stage_previews/stage${modelStage}_fit.png`,bust,current.has_results?.modeling??true);
+  if(!stage||stage==='regions')image('regions',`2.region-detection/regions/${name}/${name}_regions${showRegionOutlines?'':'_no_outlines'}.png`,bust,current.has_results?.regions??true);
+  if(!stage||stage==='photoz'){image('flux',`3.photometric-estimation/results/${name}/flux.png`,bust,current.has_results?.photoz??true);image('pz',`3.photometric-estimation/results/${name}/pz${showSpecz?'_specz':''}.png`,bust,current.has_results?.photoz??true);}
 }
 function route(){
   const key=new URLSearchParams(location.hash.slice(1)).get('system');current=systems.find(x=>x.id===key)||null;
@@ -28,13 +37,37 @@ function route(){
   $('#system-name').textContent=current.id;$('#system-subtitle').textContent=current.bands;$('#detail-mugshot').src=current.mugshot;
   $('#system-tags').replaceChildren(...[current.field,...current.aliases].map(x=>element('span','tag',x)));
   $('#facts').replaceChildren();
-  for(const [label,value] of [['Coordinates',`${current.ra}°, ${current.dec}°`],['Reference redshifts',`${current.lens_redshift} / ${current.source_redshift}`],['Einstein radius',current.einstein_radius],['Reference','Lens catalogue ↗'],['Image separation',current.image_separation],['Imaging',current.imaging],['Narrow bands','40 / 40 available'],['Field',current.field]]){
+  for(const [label,value] of [['Coordinates',`${current.ra}°, ${current.dec}°`],['Reference redshifts',`${current.lens_redshift??'—'} / ${current.source_redshift??'—'}`],['Einstein radius',current.einstein_radius],['Reference','Lens catalogue ↗'],['Image separation',current.image_separation],['Imaging',current.imaging],['Narrow bands',`${current.nb_count??40} / 40 available`],['Field',current.field]]){
     const dl=element('dl','fact'),dd=element('dd','',value);if(label==='Reference'){const a=element('a','',value);a.href=current.reference;a.target='_blank';a.rel='noopener';dd.replaceChildren(a);}dl.append(element('dt','',label),dd);$('#facts').append(dl);
   }
-  for(const [index,stage] of stages.entries())$(`[data-stage="${stage}"] .notebook`).href=`${index+1}.${['lens-modeling','region-detection','photometric-estimation'][index]}/${current.id}.ipynb`;
-  refresh();window.scrollTo(0,0);if(token)restoreJobs();
+  for(const [index,stage] of stages.entries()){
+    const notebook=$(`[data-stage="${stage}"] .notebook`);
+    notebook.href=`${index+1}.${['lens-modeling','region-detection','photometric-estimation'][index]}/${current.id}.ipynb`;
+    notebook.hidden=current.notebooks?.[stage]===false;
+    if(viewedSystem!==current.id){
+      const status=$(`[data-status="${stage}"]`);delete status.dataset.state;
+      status.textContent=current.has_results?.[stage]===false?'Not run':'Included results';
+      $(`[data-log="${stage}"]`).textContent='Ready.';$(`[data-cancel="${stage}"]`).hidden=true;
+    }
+  }
+  $('[data-run="modeling"]').textContent=current.has_model===false?'Fit model & plot':'Rebuild model & plot';
+  $('[data-fit]').hidden=current.has_model===false;
+  $('[data-stage="modeling"] .hint').textContent=current.has_model===false
+    ? 'No saved model. The first run fits all four stages and can take substantially longer.'
+    : 'Rebuild evaluates the saved maximum-likelihood model. Refit runs the parameter search and may take substantially longer.';
+  $('#input-status').textContent=(current.input_issues||[]).join(' ');
+  $('#input-status').hidden=!(current.input_issues||[]).length;
+  refresh();setBusy(!!activeJob);
+  if(viewedSystem!==current.id)window.scrollTo(0,0);
+  viewedSystem=current.id;if(token)restoreJobs();
 }
-function setBusy(busy){for(const button of document.querySelectorAll('[data-run],[data-fit]'))button.disabled=busy||!token;}
+function setBusy(busy){
+  for(const button of document.querySelectorAll('[data-run],[data-fit]')){
+    const stage=button.dataset.run||'modeling';
+    button.disabled=busy||!token||current?.can_run?.[stage]===false;
+    button.title=current?.can_run?.[stage]===false?(stage==='modeling'?'Complete the modeling inputs first.':'Complete the preceding stage and required inputs first.'):'';
+  }
+}
 async function api(path,body){const response=await fetch(path,body?{method:'POST',headers:{'Content-Type':'application/json','X-Photo-Lens-Token':token},body:JSON.stringify(body)}:{cache:'no-store'});const data=await response.json();if(!response.ok)throw Error(data.error||`HTTP ${response.status}`);return data;}
 function displayJob(job){
   if(!current||job.system!==current.id)return;
@@ -49,11 +82,12 @@ async function poll(id){
   try{
     const job=await api(`/api/jobs/${id}`);displayJob(job);
     if(['queued','running'].includes(job.state)){activeJob=job;setBusy(true);setTimeout(()=>poll(id),1500);}
-    else {activeJob=null;setBusy(false);if(job.state==='succeeded')refresh(job.stage,true);}
+    else {activeJob=null;setBusy(false);if(job.state==='succeeded'){await syncSystems();refresh(job.stage,true);}}
   }catch(error){activeJob=null;setBusy(false);$('#connection').textContent=`Connection lost: ${error.message}`;$('#offline').hidden=false;}
 }
 async function start(stage,mode='render'){
   if(!token||!current)return;
+  if(stage==='modeling'&&current.has_model===false)mode='fit';
   setBusy(true);
   try{const job=await api('/api/jobs',{system:current.id,stage,mode});activeJob=job;displayJob(job);poll(job.id);}
   catch(error){setBusy(false);$(`[data-status="${stage}"]`).textContent=error.message;}
@@ -81,5 +115,17 @@ $('#toggle-specz').onclick=()=>{
   $('#pz-image').alt=showSpecz?'Lens and source p(z) with spectroscopic redshift reference lines':'Lens and source photometric redshift probability distributions';
   refresh('photoz',true);
 };
+let syncingSystems=false;
+async function syncSystems(){
+  if(!token||syncingSystems)return;
+  syncingSystems=true;
+  try{
+    const updated=await api('/api/systems');
+    if(JSON.stringify(updated)!==JSON.stringify(systems)){systems=updated;gallery();route();}
+  }finally{syncingSystems=false;}
+}
+$('#refresh-systems').onclick=()=>syncSystems().catch(error=>{$('#connection').textContent=error.message;});
+setInterval(()=>{if(!document.hidden)syncSystems().catch(()=>{});},10000);
+window.addEventListener('focus',()=>syncSystems().catch(()=>{}));
 gallery();route();setBusy(false);window.addEventListener('hashchange',route);
 (async()=>{try{token=(await api('/api/session')).token;systems=await api('/api/systems');gallery();route();$('#connection').textContent='● Local backend connected';setBusy(false);await restoreJobs();}catch{$('#connection').textContent='Static preview';$('#offline').hidden=false;setBusy(false);}})();

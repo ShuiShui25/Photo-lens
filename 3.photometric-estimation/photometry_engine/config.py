@@ -47,7 +47,12 @@ class PipelineConfig:
     def excluded_bands(self) -> tuple[str, ...]:
         import json
         stable = json.loads((self.project_root / "config/photometry.json").read_text())
-        return tuple(stable.get("system_band_exclusions", {}).get(str(self.lens_id), []))
+        local = self.bb_system_dir / 'system.json'
+        metadata = json.loads(local.read_text()) if local.is_file() else {}
+        return tuple(dict.fromkeys([
+            *stable.get("system_band_exclusions", {}).get(str(self.lens_id), []),
+            *metadata.get('excluded_bands', []),
+        ]))
 
     @property
     def project_root(self) -> Path:

@@ -85,7 +85,9 @@ from lens_region_methods_v2 import (  # noqa: E402
 )
 
 
-SYSTEMS = tuple(item["id"] for item in json.loads((Path(__file__).resolve().parents[1] / "config/systems.json").read_text()))
+sys.path.insert(0, str(SCRIPT_DIR.parent))
+from photo_lens.workflow import available_systems
+SYSTEMS = tuple(item['id'] for item in available_systems())
 
 # Threshold scan, in units of the robust outer-region sigma, run descending so
 # that adjacent trials are nested and the flux-stability metric is meaningful.

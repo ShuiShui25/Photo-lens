@@ -9,3 +9,27 @@ dist/
 *.log
 *.local.json
 .ipynb_checkpoints/
+
+# Only the bundled example is published; additional systems stay local.
+/data/bb/*
+!/data/bb/J022511-045433/
+/data/nb/single_epoch/*/*
+!/data/nb/single_epoch/*/J022511-045433/
+/data/nb/coadd/*/*
+!/data/nb/coadd/*/J022511-045433/
+/data/catalogue/*
+!/data/catalogue/targets.csv
+/data/manual-regions/
+/1.lens-modeling/*/
+!/1.lens-modeling/J022511-045433/
+!/1.lens-modeling/lens_modeling/
+!/1.lens-modeling/region_selection/
+!/1.lens-modeling/autoarray_jax_crop_patch/
+/2.region-detection/regions/*
+!/2.region-detection/regions/J022511-045433/
+/2.region-detection/outputs/*
+!/2.region-detection/outputs/J022511-045433/
+/3.photometric-estimation/results/*
+!/3.photometric-estimation/results/J022511-045433/
+/3.photometric-estimation/nb-centres/*
+!/3.photometric-estimation/nb-centres/J022511-045433/
