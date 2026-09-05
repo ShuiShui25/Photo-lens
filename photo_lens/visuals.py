@@ -18,16 +18,20 @@ def plot_regions(name):
     ax.imshow(data, origin='lower', cmap='gray', norm=ImageNormalize(data, interval=PercentileInterval(99.5), stretch=AsinhStretch()))
     folder = ROOT / '2.region-detection/regions' / name
     from matplotlib.lines import Line2D
-    handles = []
+    handles, outlines = [], []
     for kind, color, label in [('lens','#ff75cc','Lens'),('source','#4ceaff','Source'),('background','#ffd166','Symmetric background')]:
         for region in Regions.read(folder / f'{name}_{kind}_point_fraction040.reg', format='ds9'):
-            region.to_pixel(wcs).plot(ax=ax, facecolor='none', edgecolor=color, linewidth=2)
+            outlines.append(region.to_pixel(wcs).plot(ax=ax, facecolor='none', edgecolor=color, linewidth=2))
         handles.append(Line2D([0],[0],color=color,label=label,lw=2))
     x,y = wcs.world_to_pixel_values(system_record(name)['ra'], system_record(name)['dec'])
     ax.set_xlim(x-35,x+35);ax.set_ylim(y-35,y+35)
     ax.set_xlabel('Right ascension');ax.set_ylabel('Declination');ax.set_title(name)
-    ax.legend(handles=handles,loc='upper right',facecolor='#172033',labelcolor='white')
-    fig.tight_layout();fig.savefig(folder / f'{name}_regions.png',dpi=170);plt.close(fig)
+    legend = ax.legend(handles=handles,loc='upper right',facecolor='#172033',labelcolor='white')
+    fig.tight_layout();fig.savefig(folder / f'{name}_regions.png',dpi=170)
+    for outline in outlines:
+        outline.set_visible(False)
+    legend.set_visible(False)
+    fig.savefig(folder / f'{name}_regions_no_outlines.png',dpi=170);plt.close(fig)
 
 def plot_photoz(name):
     import numpy as np
@@ -52,4 +56,14 @@ def plot_photoz(name):
         pax.fill_between(z,0,p,color=color,alpha=.12)
     axes[-1].set_xlabel('Observed wavelength (Å)');fig.suptitle(name);fig.tight_layout();fig.savefig(folder/'flux.png',dpi=160);plt.close(fig)
     pax.set(xlabel='Redshift z',ylabel='Probability density p(z)',title=name,xlim=(z[0],z[-1]))
-    pax.legend();pax.grid(alpha=.15);pfig.tight_layout();pfig.savefig(folder/'pz.png',dpi=160);plt.close(pfig)
+    pax.legend();pax.grid(alpha=.15);pfig.tight_layout();pfig.savefig(folder/'pz.png',dpi=160)
+    # Preserve the same axes when showing the catalogue spectroscopic redshifts.
+    limits = pax.get_ylim()
+    record = system_record(name)
+    for target, color in [('lens', '#3564b5'), ('source', '#bd6544')]:
+        spec_z = record.get(f'{target}_redshift')
+        if spec_z is not None and np.isfinite(spec_z):
+            pax.axvline(spec_z, color=color, linestyle='--', linewidth=1.5,
+                        label=f'{target.title()} spec-z = {spec_z:.3f}')
+    pax.set_ylim(limits);pax.legend()
+    pfig.savefig(folder/'pz_specz.png',dpi=160);plt.close(pfig)

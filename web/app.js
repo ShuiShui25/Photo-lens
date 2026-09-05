@@ -2,6 +2,7 @@ let systems = window.PHOTO_LENS_SYSTEMS;
 const $ = selector => document.querySelector(selector);
 let token = null, current = null, modelStage = 4, activeJob = null;
 const stages = ['modeling', 'regions', 'photoz'];
+let showRegionOutlines = true, showSpecz = false;
 function element(tag, className, text) { const node=document.createElement(tag); if(className)node.className=className;if(text!==undefined)node.textContent=text;return node; }
 function gallery() {
   $('#cards').replaceChildren();
@@ -17,8 +18,8 @@ function image(id,path,refresh=false){const url=path+(refresh?`?t=${Date.now()}`
 function refresh(stage=null,bust=false){
   if(!current)return;const name=current.id;
   if(!stage||stage==='modeling')image('model',`1.lens-modeling/${name}/output/stage_previews/stage${modelStage}_fit.png`,bust);
-  if(!stage||stage==='regions')image('regions',`2.region-detection/regions/${name}/${name}_regions.png`,bust);
-  if(!stage||stage==='photoz'){image('flux',`3.photometric-estimation/results/${name}/flux.png`,bust);image('pz',`3.photometric-estimation/results/${name}/pz.png`,bust);}
+  if(!stage||stage==='regions')image('regions',`2.region-detection/regions/${name}/${name}_regions${showRegionOutlines?'':'_no_outlines'}.png`,bust);
+  if(!stage||stage==='photoz'){image('flux',`3.photometric-estimation/results/${name}/flux.png`,bust);image('pz',`3.photometric-estimation/results/${name}/pz${showSpecz?'_specz':''}.png`,bust);}
 }
 function route(){
   const key=new URLSearchParams(location.hash.slice(1)).get('system');current=systems.find(x=>x.id===key)||null;
@@ -66,5 +67,19 @@ for(const [n,label] of ['SIE + MGE','Power-law mass','Two source bases','Pixeliz
 for(const button of document.querySelectorAll('[data-run]'))button.onclick=()=>start(button.dataset.run);
 $('[data-fit]').onclick=()=>start('modeling','fit');
 for(const button of document.querySelectorAll('[data-cancel]'))button.onclick=async()=>{if(activeJob)displayJob(await api(`/api/jobs/${activeJob.id}/cancel`,{}));};
+$('#toggle-regions').onclick=()=>{
+  showRegionOutlines=!showRegionOutlines;
+  $('#toggle-regions').textContent=showRegionOutlines?'Hide region outlines':'Show region outlines';
+  $('#toggle-regions').setAttribute('aria-pressed',String(showRegionOutlines));
+  $('#regions-image').alt=showRegionOutlines?'Lens, source and symmetric background regions':'System image without region outlines';
+  refresh('regions',true);
+};
+$('#toggle-specz').onclick=()=>{
+  showSpecz=!showSpecz;
+  $('#toggle-specz').textContent=showSpecz?'Hide lens/source spec-z':'Show lens/source spec-z';
+  $('#toggle-specz').setAttribute('aria-pressed',String(showSpecz));
+  $('#pz-image').alt=showSpecz?'Lens and source p(z) with spectroscopic redshift reference lines':'Lens and source photometric redshift probability distributions';
+  refresh('photoz',true);
+};
 gallery();route();setBusy(false);window.addEventListener('hashchange',route);
 (async()=>{try{token=(await api('/api/session')).token;systems=await api('/api/systems');gallery();route();$('#connection').textContent='● Local backend connected';setBusy(false);await restoreJobs();}catch{$('#connection').textContent='Static preview';$('#offline').hidden=false;setBusy(false);}})();
