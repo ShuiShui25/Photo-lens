@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Wide, image-only lens apertures for the stable-v2 region pipeline.
+"""Wide, image-only lens apertures for automatic region selection.
 
 The source reference polygons are deliberately not inputs to either method.
 Both methods stop at an image-derived anchor: the brightest positive pixel in
@@ -44,6 +44,64 @@ MGE_ENVELOPE_FLUX_STOP = 0.99
 MGE_ENVELOPE_FLUX_STEP = 0.005
 
 
+def as_anchor_list(anchors) -> list[tuple[int, int]]:
+    """Normalise a single ``(row, col)`` anchor or a sequence of them.
+
+    A bare anchor is a 2-tuple of integers; an anchor list is a sequence of
+    such tuples.  Accepting both keeps every existing single-anchor call site
+    valid while the lens layers are protected against all source components.
+    """
+    if anchors is None:
+        return []
+    items = list(anchors)
+    if not items:
+        return []
+    if len(items) == 2 and all(np.isscalar(value) for value in items):
+        return [(int(items[0]), int(items[1]))]
+    return [(int(row), int(col)) for row, col in items]
+
+
+def anchor_min_distance(mask: np.ndarray, anchors: list[tuple[int, int]],
+                        post_process=None) -> float:
+    """Euclidean distance (pixel centres) from the nearest anchor to the
+    production aperture; 0 when an anchor is covered, inf without anchors."""
+    if post_process is not None:
+        mask = post_process(mask)
+    if not anchors:
+        return float("inf")
+    if not mask.any():
+        return float("inf")
+    distance = distance_transform_edt(~mask)
+    return float(min(distance[row, col] for row, col in anchors))
+
+
+def covers_any_anchor(mask: np.ndarray, anchors: list[tuple[int, int]],
+                      post_process=None, contact_distance: float = 0.0) -> bool:
+    """Does the *production* aperture cover any protected anchor?
+
+    ``post_process`` must be the same scaling/symmetrisation the caller applies
+    before the mask becomes the production lens aperture.  Testing the raw mask
+    is not sufficient: the symmetric closure unions a mask with its own point
+    reflection, so an aperture that covers an anchor's mirror pixel acquires the
+    anchor itself and silently swallows a source component that the raw-mask
+    test declared safe.
+    """
+    if contact_distance > 0.0:
+        # Anchor "contact": the production aperture covers an anchor or
+        # comes within ``contact_distance`` pixels (0.5 PSF FWHM) of one.
+        return anchor_min_distance(mask, anchors, post_process) <= contact_distance
+    if post_process is not None:
+        mask = post_process(mask)
+    return any(bool(mask[row, col]) for row, col in anchors)
+
+
+def anchor_signal_level(signal: np.ndarray, anchors: list[tuple[int, int]]) -> float:
+    """Brightest anchor sets the isophote safety threshold."""
+    if not anchors:
+        return MIN_MODEL_ISOPHOTE_SNR
+    return max(float(signal[row, col]) for row, col in anchors)
+
+
 def source_peak_anchor(source, source_mask: np.ndarray) -> tuple[int, int, dict]:
     """Return (row, column) of the brightest residual pixel in a source mask."""
     usable = np.asarray(source_mask, dtype=bool) & source.valid
@@ -79,9 +137,9 @@ def _central_isophote(lens_product, threshold_snr: float) -> np.ndarray | None:
 
 
 def _trial_row(method: str, factor: float, threshold: float,
-               mask: np.ndarray | None, anchor_yx: tuple[int, int],
-               lens_product) -> dict:
-    row, col = anchor_yx
+               mask: np.ndarray | None, anchors,
+               lens_product, post_process=None, contact_distance: float = 0.0) -> dict:
+    anchors = as_anchor_list(anchors)
     signal = (lens_product.data - lens_product.background) / lens_product.sigma
     if mask is None:
         return {
@@ -89,22 +147,25 @@ def _trial_row(method: str, factor: float, threshold: float,
             "threshold_model_snr": float(threshold), "area_pix": 0,
             "contains_source_peak": False, "hole_pixel_count": 0,
             "model_flux_fraction": 0.0, "admissible": False,
+            "protected_anchor_count": len(anchors),
         }
     holes = int((binary_fill_holes(mask) & lens_product.valid & ~mask).sum())
     positive = np.clip(signal, 0.0, None)
     denominator = float(positive[lens_product.valid].sum())
+    covered = covers_any_anchor(mask, anchors, post_process, contact_distance)
     return {
         "method": method, "layer_factor": float(factor),
         "threshold_model_snr": float(threshold), "area_pix": int(mask.sum()),
-        "contains_source_peak": bool(mask[row, col]),
+        "contains_source_peak": covered,
         "hole_pixel_count": holes,
         "model_flux_fraction": float(positive[mask].sum() / denominator) if denominator > 0 else 0.0,
         "admissible": bool(
-            not mask[row, col]
+            not covered
             and holes == 0
             and threshold >= SOURCE_PEAK_SAFETY_FACTOR
-            * max(float(signal[row, col]), MIN_MODEL_ISOPHOTE_SNR)
+            * max(anchor_signal_level(signal, anchors), MIN_MODEL_ISOPHOTE_SNR)
         ),
+        "protected_anchor_count": len(anchors),
     }
 
 
@@ -133,12 +194,15 @@ def _enclosed_flux_mask(image: np.ndarray, lens_product) -> tuple[np.ndarray, fl
     return mask, threshold
 
 
-def mge_component_lens_mask(lens_product, anchor_yx: tuple[int, int], component_path: Path):
+def mge_component_lens_mask(lens_product, anchors, component_path: Path,
+                            post_process=None, contact_distance: float = 0.0):
     """Select a total-MGE envelope at the fitted Einstein scale.
 
-    The aperture scale is set by the fitted lens mass.  The preliminary source
-    contributes only its brightest reduced-image pixel as a hard safety anchor.
+    The aperture scale is set by the fitted lens mass.  Every preliminary
+    source component contributes its brightest reduced-image pixel as a hard
+    safety anchor, so no component can be absorbed by the lens aperture.
     """
+    anchors = as_anchor_list(anchors)
     with fits.open(component_path) as hdul:
         cube_full = np.asarray(hdul[0].data, dtype=float)
         table = hdul["COMPONENTS"].data
@@ -172,13 +236,18 @@ def mge_component_lens_mask(lens_product, anchor_yx: tuple[int, int], component_
             "enclosed_flux_fraction": MGE_ENCLOSED_FLUX_FRACTION,
             "aperture_threshold": threshold,
             "area_pix": int(mask.sum()),
-            "contains_source_peak": bool(mask[anchor_yx]),
+            "contains_source_peak": covers_any_anchor(
+                mask, anchors, post_process, contact_distance
+            ),
             "hole_pixel_count": holes,
             "model_flux_fraction": float(
                 np.nansum(np.clip(cumulative_model[mask], 0.0, None))
                 / max(full_positive_flux, 1.0e-30)
             ),
-            "admissible": bool(not mask[anchor_yx] and holes == 0),
+            "admissible": bool(
+                not covers_any_anchor(mask, anchors, post_process, contact_distance)
+                and holes == 0
+            ),
         }
         masks.append(mask)
         radial_trials.append(trial)
@@ -251,20 +320,28 @@ def mge_component_lens_mask(lens_product, anchor_yx: tuple[int, int], component_
         )
         if mask is None:
             continue
+        distance = anchor_min_distance(mask, anchors, post_process)
         envelope_trials.append({
             "enclosed_flux_fraction": float(fraction),
             "mask": mask,
             "area_pix": int(mask.sum()),
             "equivalent_radius_pix": float(np.sqrt(mask.sum() / np.pi)),
-            "contains_source_peak": bool(mask[anchor_yx]),
+            "anchor_min_distance_pix": distance,
+            "contains_source_peak": bool(
+                distance <= contact_distance if contact_distance > 0.0 else distance == 0.0
+            ),
         })
     safe_envelopes = [trial for trial in envelope_trials if not trial["contains_source_peak"]]
-    if not safe_envelopes:
-        raise RuntimeError("No total-MGE envelope protects the source anchor")
-    selected_trial = min(
-        safe_envelopes,
-        key=lambda trial: abs(trial["equivalent_radius_pix"] - einstein_radius_pix),
-    )
+    contact_fallback = not safe_envelopes
+    if contact_fallback:
+        # No envelope keeps the required distance; fall back to
+        # the smallest envelope and flag the system for the HTML warning.
+        selected_trial = min(envelope_trials, key=lambda trial: trial["area_pix"])
+    else:
+        selected_trial = min(
+            safe_envelopes,
+            key=lambda trial: abs(trial["equivalent_radius_pix"] - einstein_radius_pix),
+        )
     unconstrained_einstein_trial = min(
         envelope_trials,
         key=lambda trial: abs(trial["equivalent_radius_pix"] - einstein_radius_pix),
@@ -273,10 +350,26 @@ def mge_component_lens_mask(lens_product, anchor_yx: tuple[int, int], component_
     selected = {
         "method": "mge_components_einstein_envelope",
         "area_pix": int(mask.sum()),
-        "contains_source_peak": bool(mask[anchor_yx]),
+        "contains_source_peak": bool(selected_trial["contains_source_peak"]),
+        "covers_anchor": covers_any_anchor(mask, anchors, post_process),
         "hole_pixel_count": int((binary_fill_holes(mask) & ~mask).sum()),
         "model_flux_fraction": float(selected_trial["enclosed_flux_fraction"]),
-        "admissible": bool(not mask[anchor_yx]),
+        "admissible": bool(not selected_trial["contains_source_peak"]),
+        "contact_distance_pix": float(contact_distance),
+        "contact_definition": (
+            "production aperture covers an anchor or lies within contact_distance_pix "
+            "(Euclidean, pixel centres) of one"
+        ),
+        "anchor_min_distance_pix": float(selected_trial["anchor_min_distance_pix"]),
+        "contact_fallback_smallest_envelope": bool(contact_fallback),
+        "warning": (
+            "no envelope keeps the required distance from every anchor; the smallest "
+            "envelope was used" if contact_fallback else None
+        ),
+        "anchor_guard_applied_to": (
+            "production geometry" if post_process is not None else "raw mask"
+        ),
+        "protected_anchor_count": len(anchors),
         "enclosed_flux_fraction": float(selected_trial["enclosed_flux_fraction"]),
         "equivalent_radius_pix": float(selected_trial["equivalent_radius_pix"]),
         "fitted_einstein_radius_arcsec": fitted_einstein_radius_arcsec,
@@ -286,6 +379,10 @@ def mge_component_lens_mask(lens_product, anchor_yx: tuple[int, int], component_
         ),
         "unconstrained_einstein_equivalent_radius_pix": float(
             unconstrained_einstein_trial["equivalent_radius_pix"]
+        ),
+        "unconstrained_einstein_area_pix": int(unconstrained_einstein_trial["area_pix"]),
+        "unconstrained_einstein_anchor_min_distance_pix": float(
+            unconstrained_einstein_trial["anchor_min_distance_pix"]
         ),
         "source_anchor_forced_inward": bool(
             unconstrained_einstein_trial["contains_source_peak"]
@@ -327,10 +424,12 @@ def mge_component_lens_mask(lens_product, anchor_yx: tuple[int, int], component_
     )
 
 
-def sextractor_lens_mask(lens_product, anchor_yx: tuple[int, int], executable: Path,
-                         base_settings: dict, work_root: Path):
+def sextractor_lens_mask(lens_product, anchors, executable: Path,
+                         base_settings: dict, work_root: Path,
+                         post_process=None, contact_distance: float = 0.0):
+    anchors = as_anchor_list(anchors)
     signal = (lens_product.data - lens_product.background) / lens_product.sigma
-    anchor_level = max(float(signal[anchor_yx]), MIN_MODEL_ISOPHOTE_SNR)
+    anchor_level = max(anchor_signal_level(signal, anchors), MIN_MODEL_ISOPHOTE_SNR)
     settings = deepcopy(base_settings)
     # Lens extraction is intentionally distinct from source extraction: use an
     # absolute model-S/N threshold, suppress deblending, and allow small seeds.
@@ -360,23 +459,41 @@ def sextractor_lens_mask(lens_product, anchor_yx: tuple[int, int], executable: P
         mask = _central_mask_from_segmentation(segmentation, lens_product)
         masks.append(mask)
         trials.append(_trial_row(
-            "sextractor", factor, threshold, mask, anchor_yx, lens_product
+            "sextractor", factor, threshold, mask, anchors, lens_product,
+            post_process, contact_distance
         ))
     selected, mask = _choose_largest_admissible(trials, masks)
     selected = dict(selected)
-    selected["anchor_model_snr"] = float(signal[anchor_yx])
+    selected["anchor_model_snr"] = anchor_signal_level(signal, anchors)
+    selected["protected_anchor_count"] = len(anchors)
     selected["selection_rule"] = (
-        "largest non-deblended central SExtractor footprint excluding source peak"
+        "largest non-deblended central SExtractor footprint excluding the "
+        "brightest pixel of every preliminary source component"
     )
     selected["settings"] = settings
     return mask, selected, trials
 
 
-def build_lens_masks(lens_product, anchor_yx: tuple[int, int], executable: Path,
-                     base_settings: dict, work_root: Path, component_path: Path) -> dict:
-    sex_mask, sex_meta, sex_trials = sextractor_lens_mask(
-        lens_product, anchor_yx, executable, base_settings, work_root / "sextractor"
-    )
+def build_lens_masks(lens_product, anchors, executable: Path,
+                     base_settings: dict, work_root: Path, component_path: Path,
+                     post_process=None, contact_distance: float = 0.0) -> dict:
+    """Build the candidate lens apertures.
+
+    ``post_process`` is the caller's raw-mask -> production-aperture transform
+    (radial scaling and, when requested, point-reflection closure).  It is
+    applied inside every admissibility test so a layer is accepted only if the
+    aperture that actually gets used protects every source anchor.
+    """
+    anchors = as_anchor_list(anchors)
+    try:
+        sex_mask, sex_meta, sex_trials = sextractor_lens_mask(
+            lens_product, anchors, executable, base_settings, work_root / "sextractor",
+            post_process, contact_distance,
+        )
+    except RuntimeError as exc:
+        # Diagnostic method only: an unreachable contact distance must not stop
+        # the production (mge_isophote) aperture.
+        sex_mask, sex_meta, sex_trials = None, {"available": False, "error": str(exc)}, []
     (
         mge_mask,
         mge_meta,
@@ -385,7 +502,7 @@ def build_lens_masks(lens_product, anchor_yx: tuple[int, int], executable: Path,
         fixed_meta,
         fixed_trials,
     ) = mge_component_lens_mask(
-        lens_product, anchor_yx, component_path
+        lens_product, anchors, component_path, post_process, contact_distance
     )
     return {
         "sextractor": {"mask": sex_mask, "metadata": sex_meta, "trials": sex_trials},

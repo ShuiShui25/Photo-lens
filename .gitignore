@@ -33,3 +33,6 @@ dist/
 !/3.photometric-estimation/results/J022511-045433/
 /3.photometric-estimation/nb-centres/*
 !/3.photometric-estimation/nb-centres/J022511-045433/
+
+# Local presentation files; do not publish.
+/slides/

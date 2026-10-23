@@ -9,11 +9,12 @@ from pathlib import Path
 import shutil
 import subprocess
 import sys
+import tempfile
 import time
 import fcntl
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
-from photo_lens.workflow import system_record
+from photo_lens.workflow import system_record, model_products
 os.environ.setdefault('MPLBACKEND', 'Agg')
 os.environ.setdefault('MPLCONFIGDIR', str(ROOT / '.runtime/matplotlib'))
 os.environ.setdefault('JAX_ENABLE_X64', 'true')
@@ -33,6 +34,7 @@ def module_from(path, name):
 def modeling(name, mode):
     from photo_lens.discovery import ensure_model_config
     record = system_record(name)
+    final_stage = record.get('model_stage', 4)
     config_path = ensure_model_config(record)
     if not record['has_model']:
         mode = 'fit'
@@ -58,7 +60,8 @@ def modeling(name, mode):
         platform = os.environ.get('PHOTO_LENS_JAX_PLATFORM', 'gpu')
         os.environ['JAX_PLATFORMS'] = 'cpu' if platform == 'cpu' else 'cuda'
         command(sys.executable, base / 'run_three_stage.py', '--config', search_config, '--jax-platform', platform)
-        command(sys.executable, base / 'run_stage4.py', search_config)
+        if final_stage == 4:
+            command(sys.executable, base / 'run_stage4.py', search_config)
         previous = session / 'previous-output'
         if original.output_dir.exists():
             original.output_dir.rename(previous)
@@ -82,32 +85,84 @@ def modeling(name, mode):
     preview = config.output_dir / 'stage_previews'
     preview.mkdir(parents=True, exist_ok=True)
     records = []
-    for stage in range(1, 5):
+    for stage in range(1, final_stage + 1):
         tracer = al.from_json(file_path=exporter.stage_tracer(config.output_dir, stage))
         fit = exporter.maximum_likelihood_fit(config, bundle, tracer, stage) if stage >= 3 else al.FitImaging(dataset=bundle.dataset_masked, tracer=tracer)
         aplt.FitImagingPlotter(fit=fit, mat_plot_2d=aplt.MatPlot2D(output=aplt.Output(path=str(preview), filename=f'stage{stage}_fit', format='png'))).subplot_fit()
         records.append({'stage':stage, 'chi_squared':float(fit.chi_squared), 'reduced_chi_squared':float(fit.reduced_chi_squared)})
         print(f'Stage {stage}: chi-squared={fit.chi_squared:.6f}', flush=True)
     (preview / 'fit_metrics.json').write_text(json.dumps(records, indent=2)+'\n')
-    command(sys.executable, ROOT / '2.region-detection/export_satellite_products.py', '--config', config_path, '--products-dir', config.output_dir / 'wcs_products_stage4', '--stage', '4')
+    products = config.output_dir / ('wcs_products_stage4' if final_stage == 4 else 'wcs_products')
+    command(sys.executable, ROOT / '2.region-detection/export_satellite_products.py', '--config', config_path, '--products-dir', products, '--stage', str(final_stage))
 
 def regions(name):
     base = ROOT / '2.region-detection'
     executable = os.environ.get('PHOTO_LENS_SEXTRACTOR') or shutil.which('source-extractor') or shutil.which('sex')
     if not executable:
         raise RuntimeError('SExtractor is required: conda install -c conda-forge source-extractor, or set PHOTO_LENS_SEXTRACTOR.')
-    products = ROOT / f'1.lens-modeling/{name}/output/wcs_products_stage4'
-    command(sys.executable, base / 'region_selection_v2.py', '--system', name, '--products-dir', products, '--positions-file', ROOT / f'data/bb/{name}/positions_gui.txt', '--background-centre', 'positions-gui', '--lens-scale', '1.0', '--sextractor', executable, '--output-dir', base / 'outputs' / name)
-    os.environ['PHOTO_LENS_SEXTRACTOR'] = executable
-    command(sys.executable, base / 'apply_point_fraction_selection.py', '--system', name)
+    products = model_products(name)
+    # A fresh workspace prevents deleted components or failed selections from
+    # leaving stale satellite/source files in the active photometry inputs.
+    work_root = ROOT / '.runtime/regions'
+    work_root.mkdir(parents=True, exist_ok=True)
+    work = Path(tempfile.mkdtemp(prefix=f'{name}-', dir=work_root))
+    analysis = work / 'outputs' / name
+    result = work / 'regions' / name
+    command(sys.executable, base / 'region_selection_v2.py', '--system', name,
+            '--products-dir', products, '--positions-file', ROOT / f'data/bb/{name}/positions_gui.txt',
+            '--sextractor', executable, '--output-dir', analysis)
+    command(sys.executable, base / 'apply_point_fraction_selection.py', '--system', name,
+            '--input-dir', analysis, '--output-dir', result.parent)
     from photo_lens.visuals import plot_regions
-    plot_regions(name)
+    from photo_lens.region_diagnostics import write_diagnostics
+    plot_regions(name, folder=result)
+    write_diagnostics(name, analysis, result)
+    targets = [(analysis, base / 'outputs' / name), (result, base / 'regions' / name)]
+
+    def portable(value):
+        if isinstance(value, dict):
+            return {key: portable(item) for key, item in value.items()}
+        if isinstance(value, list):
+            return [portable(item) for item in value]
+        if isinstance(value, str):
+            for source, target in targets:
+                value = value.replace(str(source), str(target))
+            if value.startswith(str(ROOT) + '/'):
+                return str(Path(value).relative_to(ROOT))
+        return value
+
+    for folder, _ in targets:
+        for path in folder.glob('*.json'):
+            path.write_text(json.dumps(portable(json.loads(path.read_text())), indent=2) + '\n')
+    promoted = []
+    try:
+        for source, target in targets:
+            previous = work / f'previous-{target.parent.name}'
+            if target.exists():
+                target.rename(previous)
+            try:
+                target.parent.mkdir(parents=True, exist_ok=True)
+                source.rename(target)
+            except Exception:
+                if previous.exists():
+                    previous.rename(target)
+                raise
+            promoted.append((source, target, previous))
+    except Exception:
+        for source, target, previous in reversed(promoted):
+            target.rename(source)
+            if previous.exists():
+                previous.rename(target)
+        raise
+    print('Published apertures and selection diagnostics. Photometry was not run.', flush=True)
 
 def photoz(name):
     sys.path.insert(0, str(ROOT / '3.photometric-estimation'))
     from photometry_engine import PipelineConfig, run_pipeline
     settings = json.loads((ROOT / 'config/photometry.json').read_text())
     record = system_record(name)
+    if not record.get('regions_current'):
+        raise RuntimeError('Run region detection with the current selection method before photometry.')
     centres = ROOT / f'3.photometric-estimation/nb-centres/{name}/{name}_nb_antisymmetry_centres.csv'
     if not centres.is_file() and record.get('nb_centre_path'):
         centres = ROOT / record['nb_centre_path']

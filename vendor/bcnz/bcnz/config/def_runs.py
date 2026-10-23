@@ -19,6 +19,7 @@
 # Default specification of the chunks here.
 
 from IPython.core import debugger as ipdb
+from pathlib import Path
 import numpy as np
 import pandas as pd
 
@@ -114,7 +115,7 @@ def eriksen2019():
     df = pd.concat(L, axis=1).T
 
     # This applies to all configurations.
-    sed_dir = "~/home/geng/Codes/paus_BCNz/bcnz/bcnz/data/photoz/seds/cosmos_noext"
+    sed_dir = str(Path(__file__).resolve().parents[1] / "data/photoz/seds/cosmos_noext")
     df["sep_OIII"] = True
     df["sed_dir"] = sed_dir
 

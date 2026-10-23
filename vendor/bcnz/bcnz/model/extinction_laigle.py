@@ -18,6 +18,7 @@
 
 from IPython.core import debugger
 import os
+from pathlib import Path
 import glob
 import numpy as np
 import pandas as pd
@@ -27,7 +28,7 @@ from IPython.core import debugger as ipdb
 def extinction_laigle():
     """The extinction files used in the Laigle paper."""
 
-    d = '~/home/geng/Codes/paus_BCNz/bcnz/bcnz/data/photoz/ext_laws' 
+    d = Path(__file__).resolve().parents[1] / 'data/photoz/ext_laws'
     g = os.path.join(os.path.expanduser(d), '*.csv')
 
     df = pd.DataFrame()

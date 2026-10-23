@@ -1,22 +1,22 @@
 [
   {
     "stage": 1,
-    "chi_squared": 2064.648146606063,
-    "reduced_chi_squared": 1.8095075780947092
+    "chi_squared": 2012.8319162213634,
+    "reduced_chi_squared": 1.7640945803868215
   },
   {
     "stage": 2,
-    "chi_squared": 2064.3203911178307,
-    "reduced_chi_squared": 1.809220325256644
+    "chi_squared": 2009.027645772011,
+    "reduced_chi_squared": 1.760760425742341
   },
   {
     "stage": 3,
-    "chi_squared": 1754.68974869876,
-    "reduced_chi_squared": 1.5378525404897108
+    "chi_squared": 1511.859974131854,
+    "reduced_chi_squared": 1.325030652175157
   },
   {
     "stage": 4,
-    "chi_squared": 1583.2492277104627,
-    "reduced_chi_squared": 1.3875979208680655
+    "chi_squared": 1559.3865687553953,
+    "reduced_chi_squared": 1.3666841093386461
   }
 ]

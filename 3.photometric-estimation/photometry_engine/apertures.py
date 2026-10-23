@@ -72,7 +72,13 @@ def region_weight_image(
     weights[~np.isfinite(weights)] = 0.0
 
     if mode == "subpixels" and "Polygon" in region_pix.__class__.__name__:
-        if not np.any((weights > 0.0) & (weights < 1.0)):
+        # Photo-lens writes source/background as exact pixel-cell outlines.
+        # On their native grid every vertex sits on a pixel edge (half-integer
+        # coordinate) and exactly binary weights are the correct answer.
+        vertices = np.column_stack((region_pix.vertices.x, region_pix.vertices.y))
+        offset = np.abs(((vertices + 0.5) + 0.5) % 1.0 - 0.5)
+        pixel_aligned = bool(np.all(offset < 1.0e-4))
+        if not pixel_aligned and not np.any((weights > 0.0) & (weights < 1.0)):
             raise AssertionError(
                 "Polygon weights are binary; subpixel mask did not take effect"
             )

@@ -1,7 +1,7 @@
 {
   "digest": "f78a39978932a242b14c89640c94363cef9e90ba51abb77093e20b61cc7b44fc",
   "dimensions": 24,
-  "effective_sample_size": 416.4564922735731,
+  "effective_sample_size": 403.63191504755724,
   "method": "weighted_empirical_marginals_plus_gaussian_copula",
   "name": "stage2_to_stage3",
   "parameters": [
@@ -30,6 +30,6 @@
     "galaxies.satellite_0.bulge.profile_list.29.ell_comps.ell_comps_1",
     "galaxies.lens.mass.slope"
   ],
-  "sample_count": 1788,
+  "sample_count": 1621,
   "schema": 1
 }

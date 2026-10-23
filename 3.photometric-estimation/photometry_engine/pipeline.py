@@ -76,9 +76,14 @@ def _validate_mask_products(
         )
     if not np.all(convergence.aperture_subpixels == config.aperture_subpixels):
         raise AssertionError("APERTURE_SUBPIXELS was not propagated consistently")
+    # Photo-lens source/background polygons are exact pixel-cell outlines on
+    # the broad-band product grid, so integral BB areas are expected there;
+    # apertures.region_weight_image already rejects binary weights for any
+    # polygon that is not pixel-aligned.  NB grids never align and stay checked.
     fractional = (
         ~np.isclose(convergence.area_source_sub11 % 1.0, 0.0)
         | ~np.isclose(convergence.area_background_sub11 % 1.0, 0.0)
+        | (convergence.band_type != "nb")
     )
     if not fractional.all():
         bad = convergence.loc[~fractional, ["band", "image_file"]]
@@ -95,7 +100,7 @@ def _validate_mask_products(
 
 
 def run_pipeline(config: PipelineConfig) -> PipelineResult:
-    """Run Photo-lens photometry, diagnostics, and both NB-weight photo-z fits."""
+    """Run lens/source photometry, diagnostics, and redshift fits."""
     started = time.time()
     config.validate()
     config.result_dir.mkdir(parents=True, exist_ok=True)

@@ -13,7 +13,7 @@ PROJECT_ROOT = PACKAGE_ROOT.parent
 
 @dataclass(frozen=True)
 class PipelineConfig:
-    """Configuration shared by the two thin Photo-lens notebooks."""
+    """Configuration for the Photo-lens photometry workflow."""
 
     lens_id: str
     field: str = "W1"

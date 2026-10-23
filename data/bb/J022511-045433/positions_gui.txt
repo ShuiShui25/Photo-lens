@@ -1,5 +1,5 @@
 # Positions marked by mark_positions_gui.py
-# FITS image: science/HSC-G.fits
+# FITS image: science/HSC-R.fits
 # Image source: HSC
 # Pixel scale: 0.168 arcsec/pixel
 # Mask radius: 3.2 arcsec

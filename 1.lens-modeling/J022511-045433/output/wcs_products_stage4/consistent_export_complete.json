@@ -1,0 +1,21 @@
+{
+  "system": "J022511-045433",
+  "stage": 4,
+  "component_sum_max_abs_error": 2.6645352591003757e-15,
+  "grid_correction_xy_pixels": [
+    0.0,
+    0.5
+  ],
+  "fit_shape": [
+    100,
+    100
+  ],
+  "detector_shape": [
+    429,
+    430
+  ],
+  "fit_grid_origin_yx": [
+    0.0,
+    0.0
+  ]
+}

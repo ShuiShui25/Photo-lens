@@ -105,7 +105,7 @@ class Handler(SimpleHTTPRequestHandler):
     def reply(self,code,data):
         body=json.dumps(data).encode();self.send_response(code)
         self.send_header('Content-Type','application/json; charset=utf-8');self.send_header('Content-Length',str(len(body)))
-        self.send_header('Cache-Control','no-store');self.end_headers();self.wfile.write(body)
+        self.end_headers();self.wfile.write(body)
 
     def do_GET(self):
         if not self.allowed_host():return self.reply(403,{'error':'Invalid host'})
@@ -143,6 +143,9 @@ class Handler(SimpleHTTPRequestHandler):
         except (ValueError,KeyError,TypeError) as exc:return self.reply(400,{'error':str(exc)})
 
     def end_headers(self):
+        # HTML, scripts and plots all change in place during local analysis.
+        # Apply this to static responses too, not just the JSON endpoints.
+        self.send_header('Cache-Control','no-store')
         self.send_header('X-Content-Type-Options','nosniff')
         self.send_header('Referrer-Policy','same-origin')
         super().end_headers()

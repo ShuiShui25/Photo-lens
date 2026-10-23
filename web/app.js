@@ -4,6 +4,20 @@ let token = null, current = null, modelStage = 4, activeJob = null;
 let submitting = false;
 const stages = ['modeling', 'regions', 'photoz'];
 let showRegionOutlines = true, showSpecz = false, viewedSystem = null;
+let regionDetailsRequest = 0;
+const fallbackVersions = new Map();
+function assetUrl(path, refresh=false){
+  let revision=current?.asset_revisions?.[path];
+  // Static previews and an older backend still need a stable cache-busting URL.
+  // Retain it across unrelated task updates; never revert to an unversioned URL.
+  if(!revision){
+    if(refresh||!fallbackVersions.has(path))fallbackVersions.set(path,String(Date.now()));
+    revision=fallbackVersions.get(path);
+  }
+  const url=new URL(path,document.baseURI);
+  url.searchParams.set('v',revision);
+  return url.href;
+}
 function element(tag, className, text) { const node=document.createElement(tag); if(className)node.className=className;if(text!==undefined)node.textContent=text;return node; }
 function gallery() {
   $('#cards').replaceChildren();
@@ -23,18 +37,49 @@ function image(id,path,refresh=false,exists=true){
   if(!exists){img.removeAttribute('src');link.removeAttribute('href');return;}
   img.onerror=()=>{link.hidden=true;empty.hidden=false;};
   img.onload=()=>{link.hidden=false;empty.hidden=true;};
-  const url=path+(refresh?`?t=${Date.now()}`:'');img.src=url;link.href=url;
+  const url=assetUrl(path,refresh);
+  if(img.src!==url)img.src=url;
+  link.href=url;
 }
 function refresh(stage=null,bust=false){
   if(!current)return;const name=current.id;
   if(!stage||stage==='modeling')image('model',`1.lens-modeling/${name}/output/stage_previews/stage${modelStage}_fit.png`,bust,current.has_results?.modeling??true);
-  if(!stage||stage==='regions')image('regions',`2.region-detection/regions/${name}/${name}_regions${showRegionOutlines?'':'_no_outlines'}.png`,bust,current.has_results?.regions??true);
+  if(!stage||stage==='regions'){
+    image('regions',`2.region-detection/regions/${name}/${name}_regions${showRegionOutlines?'':'_no_outlines'}.png`,bust,current.has_results?.regions??true);
+    refreshRegionDetails(bust);
+  }
   if(!stage||stage==='photoz'){image('flux',`3.photometric-estimation/results/${name}/flux.png`,bust,current.has_results?.photoz??true);image('pz',`3.photometric-estimation/results/${name}/pz${showSpecz?'_specz':''}.png`,bust,current.has_results?.photoz??true);}
+}
+async function refreshRegionDetails(bust=false){
+  const request=++regionDetailsRequest, container=$('#region-diagnostics');
+  $('#regions-method-status').hidden=!(current?.has_results?.regions&&!current.regions_current);
+  if(!current?.region_diagnostics){container.hidden=true;container.replaceChildren();delete container.dataset.key;return;}
+  const name=current.id,revision=current.region_revision,key=`${name}:${revision}`;
+  if(container.dataset.key===key&&!bust)return;
+  if(container.dataset.system!==name){container.replaceChildren();container.hidden=true;}
+  try{
+    const response=await fetch(assetUrl(current.region_diagnostics,bust),{cache:'no-store'});
+    if(!response.ok)throw Error(`HTTP ${response.status}`);
+    const data=await response.json();
+    if(request!==regionDetailsRequest||current?.id!==name)return;
+    data.figure_url=assetUrl(data.figure,bust);
+    window.renderRegionDetails(container,data);
+    container.dataset.key=key;container.dataset.system=name;container.hidden=false;
+  }catch(error){
+    if(request!==regionDetailsRequest||current?.id!==name)return;
+    container.replaceChildren(element('p','hint',`Selection diagnostics could not be loaded: ${error.message}`));
+    container.hidden=false;delete container.dataset.key;
+  }
 }
 function route(){
   const key=new URLSearchParams(location.hash.slice(1)).get('system');current=systems.find(x=>x.id===key)||null;
   $('#gallery').hidden=!!current;$('#detail').hidden=!current;
   if(!current)return;
+  if(viewedSystem!==current.id)modelStage=current.model_stage||4;
+  for(const [index,button] of [...$('#model-tabs').children].entries()){
+    button.disabled=index+1>(current.model_stage||4);
+    button.classList.toggle('active',index+1===modelStage);
+  }
   $('#system-name').textContent=current.id;$('#system-subtitle').textContent=current.bands;$('#detail-mugshot').src=current.mugshot;
   $('#system-tags').replaceChildren(...[current.field,...current.aliases].map(x=>element('span','tag',x)));
   $('#facts').replaceChildren();
@@ -47,15 +92,21 @@ function route(){
     notebook.hidden=current.notebooks?.[stage]===false;
     if(viewedSystem!==current.id){
       const status=$(`[data-status="${stage}"]`);delete status.dataset.state;
-      status.textContent=current.has_results?.[stage]===false?'Not run':'Included results';
+      status.textContent=current.has_results?.[stage]?'Saved results':'Not run';
       $(`[data-log="${stage}"]`).textContent='Ready.';$(`[data-cancel="${stage}"]`).hidden=true;
     }
+    const saved=$(`[data-saved="${stage}"]`),updated=current.result_updated_at?.[stage];
+    saved.hidden=!current.has_results?.[stage];
+    saved.textContent=updated
+      ? `Saved results · ${new Date(updated*1000).toLocaleString()} · Shown until this stage completes a new run.`
+      : 'Previously saved results · Shown until this stage completes a new run.';
   }
   $('[data-run="modeling"]').textContent=current.has_model===false?'Fit model & plot':'Rebuild model & plot';
   $('[data-fit]').hidden=current.has_model===false;
-  $('[data-stage="modeling"] .hint').textContent=current.has_model===false
-    ? 'No saved model. The first run fits all four stages and can take substantially longer.'
-    : 'Rebuild evaluates the saved maximum-likelihood model. Refit runs the parameter search and may take substantially longer.';
+  $('[data-stage="modeling"] .hint:not(.saved-results)').textContent=current.has_model===false
+    ? `No saved model. The first run fits ${current.model_stage||4} stages and can take substantially longer.`
+    : `Final model: stage ${current.model_stage||4}. Rebuild evaluates the saved maximum-likelihood model. Refit runs the parameter search and may take substantially longer.`;
+  $('#photoz-input-status').hidden=!current.photoz_stale;
   $('#input-status').textContent=(current.input_issues||[]).join(' ');
   $('#input-status').hidden=!(current.input_issues||[]).length;
   refresh();setBusy(!!activeJob);
@@ -101,7 +152,7 @@ async function poll(id){
   try{
     const job=await api(`/api/jobs/${id}`);displayJob(job);
     if(['queued','running'].includes(job.state)){activeJob=job;setBusy(true);setTimeout(()=>poll(id),1500);}
-    else {activeJob=null;setBusy(false);if(job.state==='succeeded'){await syncSystems();refresh(job.stage,true);}}
+    else {activeJob=null;setBusy(false);if(job.state==='succeeded'){await syncSystems(true);if(current?.id===job.system)refresh(job.stage,true);}}
   }catch(error){activeJob=null;setBusy(false);$('#connection').textContent=`Connection lost: ${error.message}`;$('#offline').hidden=false;}
 }
 async function start(stage,mode='render'){
@@ -146,17 +197,21 @@ $('#toggle-specz').onclick=()=>{
   showSpecz=!showSpecz;
   $('#toggle-specz').textContent=showSpecz?'Hide lens/source spec-z':'Show lens/source spec-z';
   $('#toggle-specz').setAttribute('aria-pressed',String(showSpecz));
-  $('#pz-image').alt=showSpecz?'Lens and source p(z) with spectroscopic redshift reference lines':'Lens and source photometric redshift probability distributions';
+  $('#pz-image').alt=showSpecz?'Lens p(z) above and source p(z) below, each with its spectroscopic redshift reference line':'Lens p(z) in the upper panel and source p(z) in the lower panel';
   refresh('photoz',true);
 };
-let syncingSystems=false;
-async function syncSystems(){
-  if(!token||syncingSystems)return;
-  syncingSystems=true;
-  try{
+let systemsRequest=null;
+async function syncSystems(fresh=false){
+  if(!token)return;
+  if(systemsRequest){await systemsRequest;if(!fresh)return;}
+  const request=(async()=>{
     const updated=await api('/api/systems');
     if(JSON.stringify(updated)!==JSON.stringify(systems)){systems=updated;gallery();route();}
-  }finally{syncingSystems=false;}
+  })();
+  systemsRequest=request;
+  try{
+    await request;
+  }finally{if(systemsRequest===request)systemsRequest=null;}
 }
 $('#refresh-systems').onclick=()=>syncSystems().catch(error=>{$('#connection').textContent=error.message;});
 setInterval(()=>{if(!document.hidden)syncSystems().catch(()=>{});},10000);

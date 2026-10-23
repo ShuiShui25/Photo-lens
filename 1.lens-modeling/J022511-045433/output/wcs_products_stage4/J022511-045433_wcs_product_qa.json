@@ -1,27 +1,21 @@
 {
-  "component_sum_relative_l2": 0.0,
-  "convolved_centroid_fits_yx": [
-    213.35297202664884,
-    214.5862795897867
+  "system": "J022511-045433",
+  "stage": 4,
+  "component_sum_max_abs_error": 2.6645352591003757e-15,
+  "grid_correction_xy_pixels": [
+    0.0,
+    0.5
+  ],
+  "fit_shape": [
+    100,
+    100
   ],
   "detector_shape": [
     429,
     430
   ],
-  "finite_model_pixels": 1141,
-  "intrinsic_centroid_fits_yx": [
-    213.33515741675052,
-    214.79561544676474
-  ],
-  "mapping_roundtrip_max_abs_arcsec": 1.8943180357666733e-15,
-  "mapping_schema": "autolens-y-up_to_fits-row-up-v2",
-  "mge_schema": "lens-mge-v2-seven-column-full-detector",
-  "profile_centre_fits_xy": [
-    214.7951786763605,
-    213.33469041086292
-  ],
-  "psf_centroid_offset_fits_yx_pix": [
-    0.01773355250073294,
-    -0.2092865447796406
+  "fit_grid_origin_yx": [
+    0.0,
+    0.0
   ]
 }

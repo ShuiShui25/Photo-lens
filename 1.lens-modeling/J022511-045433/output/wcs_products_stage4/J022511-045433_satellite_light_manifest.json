@@ -1,27 +1,24 @@
 {
   "system": "J022511-045433",
   "stage": 4,
-  "tracer": "../stage4_pixel_source_20x20_jax_jp3605fdeaaf_5a904fda86_fomv1_lg1_invld1_cbz_clipsig1/75ee631d07c9e021f83506eac94488f1/files/tracer.json",
-  "selection": "lens-redshift light-bearing galaxies without a mass profile; the higher-redshift source is excluded",
+  "tracer": "../stage4_pixel_source_20x20_jax_jp3605fdeaaf_cf08051eae_fomv1_lg1_invld1_cbz_clipsig1/75ee631d07c9e021f83506eac94488f1/files/tracer.json",
   "satellite_count": 1,
   "satellites": [
     {
       "index": 0,
       "profile_count": 30,
-      "autolens_y_arcsec": -0.9789282512305769,
-      "autolens_x_arcsec": 1.8818521506095727,
-      "fits_x_pixel_zero_indexed": 225.70150089648556,
-      "fits_y_pixel_zero_indexed": 208.17304612362753,
-      "ra_deg": 36.29548689860824,
-      "dec_deg": -4.909591128335105,
+      "fits_x_pixel_zero_indexed": 225.96700931468254,
+      "fits_y_pixel_zero_indexed": 208.37630628285694,
+      "autolens_y_arcsec": -1.0287805444800335,
+      "autolens_x_arcsec": 1.9264575648666675,
+      "ra_deg": 36.2954744551405,
+      "dec_deg": -4.909581654598126,
       "model": "J022511-045433_satellite_0_light_model_wcs.fits",
       "intrinsic": "J022511-045433_satellite_0_light_intrinsic_wcs.fits",
-      "positive_model_flux": 19.69069091816855
+      "positive_model_flux": 11.600570069937886
     }
   ],
   "autolens_lens_plane_model": "J022511-045433_autolens_lens_plane_model_wcs.fits",
   "autolens_lens_light_subtracted": "J022511-045433_autolens_lens_light_subtracted_wcs.fits",
-  "autolens_subtracted_definition": "literal FitImaging subtracted_images_of_planes_list[-1], mapped from the trimmed/FFT-padded native array to detector pixels",
-  "exact_fit_qa": "J022511-045433_exact_fit_plane_qa.json",
-  "fit_array_validation": "strict serialized array_equal on every unmasked pixel"
+  "exact_fit_qa": "J022511-045433_exact_fit_plane_qa.json"
 }

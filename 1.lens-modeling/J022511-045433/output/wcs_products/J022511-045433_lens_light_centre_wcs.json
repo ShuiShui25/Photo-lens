@@ -1,27 +1,27 @@
 {
-  "autolens_x_arcsec": 0.04906398290245878,
-  "autolens_y_arcsec": -0.11226807348476729,
+  "autolens_x_arcsec": 0.005258015130504589,
+  "autolens_y_arcsec": -0.11467299698611605,
   "convolved_model_centroid_fits_yx": [
-    213.34808808652198,
-    214.5846268173222
+    213.31770621962437,
+    214.57082385205206
   ],
-  "dec_deg": -4.909349957670878,
-  "fits_x_pixel_zero_indexed": 214.79204751727653,
-  "fits_y_pixel_zero_indexed": 213.33173765782877,
+  "dec_deg": -4.909350614864886,
+  "fits_x_pixel_zero_indexed": 214.53129770911013,
+  "fits_y_pixel_zero_indexed": 213.3174226369874,
   "intrinsic_model_centroid_fits_yx": [
-    213.3303545336163,
-    214.79391336232894
+    213.31192358833334,
+    214.53366538809962
   ],
   "mapping_schema": "autolens-y-up_to_fits-row-up-v2",
   "psf_centroid_offset_fits_yx_pix": [
-    0.01773355250073294,
-    -0.2092865447796406
+    0.0057826309003594645,
+    0.03715846406868906
   ],
   "psf_centroid_offset_model_yx_pix": [
-    -0.01773355250073294,
-    -0.2092865447796406
+    -0.0057826309003594645,
+    0.03715846406868906
   ],
-  "ra_deg": 36.295997592682944,
+  "ra_deg": 36.29600980497356,
   "reduced_image_definition": "science data minus full-detector PSF-convolved stage-3 lens-plane light model",
   "stage": 3,
   "system": "J022511-045433"

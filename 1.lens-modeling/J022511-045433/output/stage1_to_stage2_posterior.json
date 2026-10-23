@@ -1,7 +1,7 @@
 {
   "digest": "b88ddf43108907e347aa733b76309fc28d25add9e2ccf18954b185964f21979a",
   "dimensions": 23,
-  "effective_sample_size": 706.6357488408029,
+  "effective_sample_size": 566.4167481865597,
   "method": "weighted_empirical_marginals_plus_gaussian_copula",
   "name": "stage1_to_stage2",
   "parameters": [
@@ -29,6 +29,6 @@
     "galaxies.satellite_0.bulge.profile_list.29.ell_comps.ell_comps_0",
     "galaxies.satellite_0.bulge.profile_list.29.ell_comps.ell_comps_1"
   ],
-  "sample_count": 7911,
+  "sample_count": 11786,
   "schema": 1
 }

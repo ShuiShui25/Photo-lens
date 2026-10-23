@@ -126,32 +126,23 @@ def _sexagesimal(token: str, is_ra: bool) -> float:
 
 
 def read_region_vertices(path: Path) -> np.ndarray | None:
-    """Polygon vertices as an (N, 2) array of degrees, or None for non-polygons."""
-    text = path.read_text()
-    match = re.search(r"polygon\(([^)]*)\)", text)
-    if match is None:
-        return None
-    tokens = [value.strip() for value in match.group(1).split(",")]
-    if len(tokens) % 2:
-        raise ValueError(f"polygon in {path} has an odd number of coordinates")
-    # DS9 FK5 polygons may use either decimal degrees or sexagesimal strings.
-    # Coordinates alternate RA, Dec, so RA alone receives the hour-to-degree
-    # conversion performed by ``_sexagesimal``.
-    vertices = [
-        (_sexagesimal(tokens[index], True),
-         _sexagesimal(tokens[index + 1], False))
-        for index in range(0, len(tokens), 2)
-    ]
-    return np.asarray(vertices, dtype=float)
+    """Sky polygon vertices in ICRS, respecting the DS9 frame declaration."""
+    from regions import Regions
+    for region in Regions.read(path, format='ds9'):
+        if hasattr(region, 'vertices') and hasattr(region.vertices, 'icrs'):
+            vertices = region.vertices.icrs
+            return np.column_stack((vertices.ra.deg, vertices.dec.deg))
+    return None
 
 
 def read_region_centre(path: Path) -> tuple[float, float] | None:
     """Centre of an ``ellipse``/``circle`` region, in degrees."""
-    text = path.read_text()
-    match = re.search(r"(?:ellipse|circle)\(([^,]+),([^,]+),", text)
-    if match is None:
-        return None
-    return _sexagesimal(match.group(1), True), _sexagesimal(match.group(2), False)
+    from regions import Regions
+    for region in Regions.read(path, format='ds9'):
+        if hasattr(region, 'center') and hasattr(region.center, 'icrs'):
+            centre = region.center.icrs
+            return float(centre.ra.deg), float(centre.dec.deg)
+    return None
 
 
 def reflection_centre(source: Path, background: Path) -> tuple[float, float] | None:
@@ -296,7 +287,8 @@ def arc_inner_radius_pix(region: Path, wcs: WCS, x0: float, y0: float) -> float 
     vertices = read_region_vertices(region)
     if vertices is None:
         return None
-    px, py = wcs.world_to_pixel_values(vertices[:, 0], vertices[:, 1])
+    from astropy.coordinates import SkyCoord
+    px, py = wcs.world_to_pixel(SkyCoord(vertices[:, 0], vertices[:, 1], unit='deg', frame='icrs'))
     return float(np.min(np.hypot(np.asarray(px) - x0, np.asarray(py) - y0)))
 
 
@@ -342,7 +334,8 @@ def run_system(args, root: Path, system: str) -> list[dict]:
         except (FileNotFoundError, ValueError) as exc:
             print(f"  {band}: skipped ({exc})")
             continue
-        x0, y0 = (float(v) for v in wcs.world_to_pixel_values(*start))
+        from astropy.coordinates import SkyCoord
+        x0, y0 = (float(v) for v in wcs.world_to_pixel(SkyCoord(*start, unit='deg', frame='icrs')))
 
         rout = args.rout
         if rout is None:
@@ -356,7 +349,8 @@ def run_system(args, root: Path, system: str) -> list[dict]:
         fit = fit_centre(img, var, x0, y0, args.rin, rout,
                          half=args.half, step=args.step, order=args.order,
                          fit_sky_gradient=args.fit_sky_gradient)
-        ra_fit, dec_fit = (float(v) for v in wcs.pixel_to_world_values(fit["x"], fit["y"]))
+        sky_fit = wcs.pixel_to_world(fit['x'], fit['y']).icrs
+        ra_fit, dec_fit = float(sky_fit.ra.deg), float(sky_fit.dec.deg)
 
         row = {"system": system, "band": band, "ra_deg": ra_fit, "dec_deg": dec_fit,
                "x_pix": fit["x"], "y_pix": fit["y"], "r_in_pix": args.rin,
@@ -365,7 +359,7 @@ def run_system(args, root: Path, system: str) -> list[dict]:
         parts = [f"  {band:2s} r=[{args.rin:.1f},{rout:.1f}]px n={fit['n_pix']:4d}"
                  f" chi2/N={fit['chi2_min']:8.4f}"]
         for name, (ra, dec) in refs.items():
-            rx, ry = (float(v) for v in wcs.world_to_pixel_values(ra, dec))
+            rx, ry = (float(v) for v in wcs.world_to_pixel(SkyCoord(ra, dec, unit='deg', frame='icrs')))
             row[f"d{name}_x_pix"] = fit["x"] - rx
             row[f"d{name}_y_pix"] = fit["y"] - ry
             parts.append(f" {name}=({fit['x']-rx:+6.3f},{fit['y']-ry:+6.3f})")

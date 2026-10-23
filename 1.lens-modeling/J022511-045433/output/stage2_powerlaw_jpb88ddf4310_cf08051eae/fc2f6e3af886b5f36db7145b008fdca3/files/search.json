@@ -1,0 +1,51 @@
+{
+  "type": "instance",
+  "class_path": "autofit.non_linear.search.nest.nautilus.search.Nautilus",
+  "arguments": {
+    "path_prefix": {
+      "type": "path",
+      "path": "../../.."
+    },
+    "name": "stage2_powerlaw_jpb88ddf4310_cf08051eae",
+    "enlarge_per_dim": 1.1,
+    "inplace": false,
+    "n_update": null,
+    "split_threshold": 100,
+    "n_shell": 1,
+    "n_eff": 100,
+    "paths": {
+      "type": "instance",
+      "class_path": "autofit.non_linear.paths.directory.DirectoryPaths",
+      "arguments": {
+        "path_prefix": {
+          "type": "path",
+          "path": "../../.."
+        },
+        "name": "stage2_powerlaw_jpb88ddf4310_cf08051eae",
+        "unique_tag": null,
+        "identifier": "fc2f6e3af886b5f36db7145b008fdca3",
+        "is_identifier_in_paths": true,
+        "parent": null,
+        "image_path_suffix": ""
+      }
+    },
+    "n_networks": 4,
+    "iterations_per_full_update": 1e+99,
+    "initializer": {
+      "type": "instance",
+      "class_path": "autofit.non_linear.initializer.InitializerPrior",
+      "arguments": {}
+    },
+    "unique_tag": null,
+    "number_of_cores": 1,
+    "n_points_min": null,
+    "initial_values": {
+      "type": "dict",
+      "arguments": {}
+    },
+    "iterations_per_quick_update": 1e+99,
+    "n_live": 75,
+    "seed": null,
+    "n_like_new_bound": null
+  }
+}

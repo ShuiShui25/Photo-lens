@@ -16,6 +16,7 @@
 # encoding: UTF8
 
 import functools
+from pathlib import Path
 from IPython.core import debugger as ipdb
 
 
@@ -33,7 +34,7 @@ def rband(field):
 
 
 def paus(engine, memba_prod, field, d_cosmos='~/data/cosmos',
-         d_filters='~/home/geng/Codes/paus_BCNz/bcnz/bcnz/data/photoz/all_filters/v3', min_nb=35,
+         d_filters=None, min_nb=35,
          only_specz=False, secure_spec=False, has_bb=False, sel_gal=True,
          coadd_file=None, sel_gal_specz = True, apply_mask = False):
     """Load the PAUS data from PAUdm and perform the required
@@ -102,6 +103,8 @@ def paus(engine, memba_prod, field, d_cosmos='~/data/cosmos',
 
     # Synthetic narrow band coefficients.
     synband = rband(field)
+    if d_filters is None:
+        d_filters = Path(__file__).resolve().parent / 'photoz/all_filters/v3'
     filters = bcnz.model.all_filters(d_filters=d_filters)
     coeff = bcnz.model.nb2bb(filters, synband)
 

@@ -1,0 +1,2819 @@
+{
+  "type": "collection",
+  "arguments": {
+    "galaxies": {
+      "type": "collection",
+      "arguments": {
+        "lens": {
+          "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+          "type": "model",
+          "arguments": {
+            "redshift": {
+              "type": "Constant",
+              "value": 0.238
+            },
+            "bulge": {
+              "class_path": "autogalaxy.profiles.basis.Basis",
+              "type": "model",
+              "arguments": {
+                "profile_list": {
+                  "type": "collection",
+                  "arguments": {
+                    "0": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.01
+                        }
+                      }
+                    },
+                    "1": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.015098690546187088
+                        }
+                      }
+                    },
+                    "2": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.022797045620951938
+                        }
+                      }
+                    },
+                    "3": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.03442055371980628
+                        }
+                      }
+                    },
+                    "4": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.05197052890437639
+                        }
+                      }
+                    },
+                    "5": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.07846869334488506
+                        }
+                      }
+                    },
+                    "6": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.11847745183780697
+                        }
+                      }
+                    },
+                    "7": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.17888543819998323
+                        }
+                      }
+                    },
+                    "8": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.2700935874600622
+                        }
+                      }
+                    },
+                    "9": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.40780594955689964
+                        }
+                      }
+                    },
+                    "10": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.6157335835253609
+                        }
+                      }
+                    },
+                    "11": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.9296770836544265
+                        }
+                      }
+                    },
+                    "12": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 1.4036906593979872
+                        }
+                      }
+                    },
+                    "13": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 2.1193890888823512
+                        }
+                      }
+                    },
+                    "14": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 7,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 8,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 3.2000000000000006
+                        }
+                      }
+                    },
+                    "15": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.01
+                        }
+                      }
+                    },
+                    "16": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.015098690546187088
+                        }
+                      }
+                    },
+                    "17": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.022797045620951938
+                        }
+                      }
+                    },
+                    "18": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.03442055371980628
+                        }
+                      }
+                    },
+                    "19": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.05197052890437639
+                        }
+                      }
+                    },
+                    "20": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.07846869334488506
+                        }
+                      }
+                    },
+                    "21": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.11847745183780697
+                        }
+                      }
+                    },
+                    "22": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.17888543819998323
+                        }
+                      }
+                    },
+                    "23": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.2700935874600622
+                        }
+                      }
+                    },
+                    "24": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.40780594955689964
+                        }
+                      }
+                    },
+                    "25": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.6157335835253609
+                        }
+                      }
+                    },
+                    "26": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.9296770836544265
+                        }
+                      }
+                    },
+                    "27": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 1.4036906593979872
+                        }
+                      }
+                    },
+                    "28": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 2.1193890888823512
+                        }
+                      }
+                    },
+                    "29": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 5,
+                              "mean": -0.015424,
+                              "sigma": 0.2
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 6,
+                              "mean": 0.009289,
+                              "sigma": 0.2
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 84,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 85,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 3.2000000000000006
+                        }
+                      }
+                    }
+                  }
+                },
+                "regularization": null
+              }
+            },
+            "mass": {
+              "class_path": "autogalaxy.profiles.mass.total.power_law.PowerLaw",
+              "type": "model",
+              "arguments": {
+                "centre": {
+                  "type": "tuple_prior",
+                  "arguments": {
+                    "centre_0": {
+                      "type": "Gaussian",
+                      "id": 162,
+                      "mean": -0.015424,
+                      "sigma": 0.2
+                    },
+                    "centre_1": {
+                      "type": "Gaussian",
+                      "id": 163,
+                      "mean": 0.009289,
+                      "sigma": 0.2
+                    }
+                  }
+                },
+                "ell_comps": {
+                  "type": "tuple_prior",
+                  "arguments": {
+                    "ell_comps_0": {
+                      "type": "TruncatedGaussian",
+                      "id": 164,
+                      "mean": 0.0,
+                      "sigma": 0.3,
+                      "lower_limit": -1.0,
+                      "upper_limit": 1.0
+                    },
+                    "ell_comps_1": {
+                      "type": "TruncatedGaussian",
+                      "id": 165,
+                      "mean": 0.0,
+                      "sigma": 0.3,
+                      "lower_limit": -1.0,
+                      "upper_limit": 1.0
+                    }
+                  }
+                },
+                "einstein_radius": {
+                  "type": "Gaussian",
+                  "id": 166,
+                  "mean": 1.2,
+                  "sigma": 0.3
+                },
+                "slope": {
+                  "type": "Uniform",
+                  "id": 167,
+                  "lower_limit": 1.5,
+                  "upper_limit": 3.0
+                }
+              }
+            },
+            "shear": {
+              "class_path": "autogalaxy.profiles.mass.sheets.external_shear.ExternalShear",
+              "type": "model",
+              "arguments": {
+                "gamma_1": {
+                  "type": "Uniform",
+                  "id": 170,
+                  "lower_limit": -0.2,
+                  "upper_limit": 0.2
+                },
+                "gamma_2": {
+                  "type": "Uniform",
+                  "id": 171,
+                  "lower_limit": -0.2,
+                  "upper_limit": 0.2
+                }
+              }
+            }
+          }
+        },
+        "satellite_0": {
+          "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+          "type": "model",
+          "arguments": {
+            "redshift": {
+              "type": "Constant",
+              "value": 0.238
+            },
+            "bulge": {
+              "class_path": "autogalaxy.profiles.basis.Basis",
+              "type": "model",
+              "arguments": {
+                "profile_list": {
+                  "type": "collection",
+                  "arguments": {
+                    "0": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.01
+                        }
+                      }
+                    },
+                    "1": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.015098690546187088
+                        }
+                      }
+                    },
+                    "2": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.022797045620951938
+                        }
+                      }
+                    },
+                    "3": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.03442055371980628
+                        }
+                      }
+                    },
+                    "4": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.05197052890437639
+                        }
+                      }
+                    },
+                    "5": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.07846869334488506
+                        }
+                      }
+                    },
+                    "6": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.11847745183780697
+                        }
+                      }
+                    },
+                    "7": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.17888543819998323
+                        }
+                      }
+                    },
+                    "8": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.2700935874600622
+                        }
+                      }
+                    },
+                    "9": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.40780594955689964
+                        }
+                      }
+                    },
+                    "10": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.6157335835253609
+                        }
+                      }
+                    },
+                    "11": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.9296770836544265
+                        }
+                      }
+                    },
+                    "12": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 1.4036906593979872
+                        }
+                      }
+                    },
+                    "13": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 2.1193890888823512
+                        }
+                      }
+                    },
+                    "14": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 179,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 180,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 3.2000000000000006
+                        }
+                      }
+                    },
+                    "15": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.01
+                        }
+                      }
+                    },
+                    "16": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.015098690546187088
+                        }
+                      }
+                    },
+                    "17": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.022797045620951938
+                        }
+                      }
+                    },
+                    "18": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.03442055371980628
+                        }
+                      }
+                    },
+                    "19": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.05197052890437639
+                        }
+                      }
+                    },
+                    "20": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.07846869334488506
+                        }
+                      }
+                    },
+                    "21": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.11847745183780697
+                        }
+                      }
+                    },
+                    "22": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.17888543819998323
+                        }
+                      }
+                    },
+                    "23": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.2700935874600622
+                        }
+                      }
+                    },
+                    "24": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.40780594955689964
+                        }
+                      }
+                    },
+                    "25": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.6157335835253609
+                        }
+                      }
+                    },
+                    "26": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 0.9296770836544265
+                        }
+                      }
+                    },
+                    "27": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 1.4036906593979872
+                        }
+                      }
+                    },
+                    "28": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 2.1193890888823512
+                        }
+                      }
+                    },
+                    "29": {
+                      "class_path": "autogalaxy.profiles.light.linear.gaussian.Gaussian",
+                      "type": "model",
+                      "arguments": {
+                        "centre": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "centre_0": {
+                              "type": "Gaussian",
+                              "id": 177,
+                              "mean": -0.958851,
+                              "sigma": 0.08
+                            },
+                            "centre_1": {
+                              "type": "Gaussian",
+                              "id": 178,
+                              "mean": 1.899399,
+                              "sigma": 0.08
+                            }
+                          }
+                        },
+                        "ell_comps": {
+                          "type": "tuple_prior",
+                          "arguments": {
+                            "ell_comps_0": {
+                              "type": "Uniform",
+                              "id": 256,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            },
+                            "ell_comps_1": {
+                              "type": "Uniform",
+                              "id": 257,
+                              "lower_limit": -0.7,
+                              "upper_limit": 0.7
+                            }
+                          }
+                        },
+                        "sigma": {
+                          "type": "Constant",
+                          "value": 3.2000000000000006
+                        }
+                      }
+                    }
+                  }
+                },
+                "regularization": null
+              }
+            }
+          }
+        },
+        "source": {
+          "class_path": "autogalaxy.galaxy.galaxy.Galaxy",
+          "type": "model",
+          "arguments": {
+            "redshift": {
+              "type": "Constant",
+              "value": 1.2
+            },
+            "pixelization": {
+              "class_path": "autoarray.inversion.pixelization.pixelization.Pixelization",
+              "type": "model",
+              "arguments": {
+                "mesh": {
+                  "class_path": "autoarray.inversion.pixelization.mesh.rectangular_uniform.RectangularUniform",
+                  "type": "instance",
+                  "arguments": {
+                    "shape": {
+                      "type": "tuple",
+                      "values": [
+                        20,
+                        20
+                      ]
+                    }
+                  }
+                },
+                "regularization": {
+                  "class_path": "lens_modeling.regularization.ConstantPlusBrightnessZeroth",
+                  "type": "model",
+                  "arguments": {
+                    "coefficient": {
+                      "type": "LogUniform",
+                      "id": 1199,
+                      "lower_limit": 0.001,
+                      "upper_limit": 10000.0
+                    },
+                    "coefficient_zeroth": {
+                      "type": "LogUniform",
+                      "id": 1198,
+                      "lower_limit": 0.1,
+                      "upper_limit": 100.0
+                    },
+                    "signal_scale": {
+                      "type": "Constant",
+                      "value": 0.5
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,28 +1,20 @@
 {
-  "autolens_x_arcsec": 0.0495900176285633,
-  "autolens_y_arcsec": -0.11177201097503064,
-  "convolved_model_centroid_fits_yx": [
-    213.35297202664884,
-    214.5862795897867
-  ],
-  "dec_deg": -4.909349820016367,
-  "fits_x_pixel_zero_indexed": 214.7951786763605,
-  "fits_y_pixel_zero_indexed": 213.33469041086292,
-  "intrinsic_model_centroid_fits_yx": [
-    213.33515741675052,
-    214.79561544676474
-  ],
-  "mapping_schema": "autolens-y-up_to_fits-row-up-v2",
-  "psf_centroid_offset_fits_yx_pix": [
-    0.01773355250073294,
-    -0.2092865447796406
-  ],
-  "psf_centroid_offset_model_yx_pix": [
-    -0.01773355250073294,
-    -0.2092865447796406
-  ],
-  "ra_deg": 36.295997445911794,
-  "reduced_image_definition": "science data minus full-detector PSF-convolved stage-4 lens-plane light model",
+  "system": "J022511-045433",
   "stage": 4,
-  "system": "J022511-045433"
+  "mapping_schema": "fit-native-grid",
+  "autolens_y_arcsec": -0.11410064155586291,
+  "autolens_x_arcsec": 0.005373446641549223,
+  "fits_x_pixel_zero_indexed": 214.5319848014378,
+  "fits_y_pixel_zero_indexed": 213.82082951454842,
+  "ra_deg": 36.29600975063146,
+  "dec_deg": -4.9093271244651815,
+  "grid_correction_xy_pixels": [
+    0.0,
+    0.5
+  ],
+  "psf_centroid_offset_fits_yx_pix": [
+    0.0057826309003594645,
+    0.03715846406868906
+  ],
+  "centre_definition": "intrinsic shared MGE centre mapped through actual fit grid; not a convolved-light centre"
 }

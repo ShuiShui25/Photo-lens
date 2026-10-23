@@ -1,9 +1,16 @@
 """Discover named local systems without running analyses or writing files."""
 import csv
 import json
+import hashlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def artifact_version(path):
+    """Keep file versions as strings: nanosecond timestamps exceed JS precision."""
+    stat = path.stat()
+    return f'{stat.st_mtime_ns}-{stat.st_size}'
 
 
 def read_json(path):
@@ -83,21 +90,59 @@ def discover_systems():
                 if not noise or not local_path(model_path.parent, noise).is_file():
                     issues.append('Missing variance or weight image.')
             output = model_path.parent / 'output'
-            record['has_model'] = all(any(output.glob(f'stage{i}_*/**/files/tracer.json')) for i in range(1, 5))
+            from .workflow import model_products, REGION_METHOD
+            products = model_products(name)
+            model_stage = 4 if products.name == 'wcs_products_stage4' else 3
+            record['model_stage'] = model_stage
+            record['has_model'] = all(any(output.glob(f'stage{i}_*/**/files/tracer.json')) for i in range(1, model_stage + 1))
             regions = ROOT / '2.region-detection/regions' / name
             has_regions = all((regions / f'{name}_{kind}_point_fraction040.reg').is_file()
                               for kind in ('lens', 'source', 'background'))
+            region_summary = read_json(regions / f'{name}_point_fraction040_summary.json')
+            record['regions_current'] = has_regions and region_summary.get('version') == REGION_METHOD and region_summary.get('status') == 'complete'
+            diagnostics = regions / f'{name}_region_diagnostics.json'
+            record['region_diagnostics'] = diagnostics.relative_to(ROOT).as_posix() if diagnostics.is_file() else None
+            record['region_revision'] = artifact_version(diagnostics) if diagnostics.is_file() else None
             record['can_run'] = {
                 'modeling': not issues,
-                'regions': (output / f'wcs_products_stage4/{name}_exact_fit_plane_qa.json').is_file(),
-                'photoz': has_regions and has_catalogue and bool(nb),
+                'regions': not issues and all((products / f'{name}_{suffix}').is_file() for suffix in (
+                    'exact_fit_plane_qa.json', 'lens_light_centre_wcs.json',
+                    'lens_light_model_wcs.fits', 'lens_mge_components_wcs.fits',
+                    'autolens_lens_light_subtracted_wcs.fits')),
+                'photoz': record['regions_current'] and has_catalogue and bool(nb),
             }
             record['input_issues'] = issues
             record['has_results'] = {
-                'modeling': (output / 'stage_previews/stage4_fit.png').is_file(),
+                'modeling': (output / f'stage_previews/stage{model_stage}_fit.png').is_file(),
                 'regions': (regions / f'{name}_regions.png').is_file(),
                 'photoz': (ROOT / '3.photometric-estimation/results' / name / 'pz.png').is_file(),
             }
+            photo_results = ROOT / '3.photometric-estimation/results' / name
+            artifacts = {
+                'modeling': [output / f'stage_previews/stage{i}_fit.png' for i in range(1, model_stage + 1)],
+                'regions': [regions / f'{name}_{suffix}' for suffix in (
+                    'regions.png', 'regions_no_outlines.png', 'selection_diagnostics.png', 'region_diagnostics.json')],
+                'photoz': [photo_results / filename for filename in ('flux.png', 'pz.png', 'pz_specz.png')],
+            }
+            record['asset_revisions'] = {}
+            record['result_updated_at'] = {}
+            for stage, paths in artifacts.items():
+                existing = [path for path in paths if path.is_file()]
+                for path in existing:
+                    record['asset_revisions'][path.relative_to(ROOT).as_posix()] = artifact_version(path)
+                if existing:
+                    record['result_updated_at'][stage] = max(path.stat().st_mtime for path in existing)
+            # Saved p(z) is not recomputed merely because region files changed.
+            record['photoz_stale'] = False
+            manifest = ROOT / '3.photometric-estimation/results' / name / 'input_manifest.csv'
+            if record['has_results']['photoz'] and manifest.is_file():
+                with manifest.open() as stream:
+                    for row in csv.DictReader(stream):
+                        if row.get('role') not in ('lens_region', 'source_region', 'background_region'):
+                            continue
+                        path = local_path(ROOT, row['relative_path'])
+                        if not path.is_file() or hashlib.sha256(path.read_bytes()).hexdigest() != row.get('sha256'):
+                            record['photoz_stale'] = True
             record['notebooks'] = {stage: (ROOT / f'{i}.{directory}/{name}.ipynb').is_file()
                 for i, directory, stage in [(1, 'lens-modeling', 'modeling'),
                     (2, 'region-detection', 'regions'), (3, 'photometric-estimation', 'photoz')]}

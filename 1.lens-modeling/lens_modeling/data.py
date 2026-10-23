@@ -163,8 +163,9 @@ def load_dataset(config: RunConfig) -> DatasetBundle:
     dataset = al.Imaging(
         data=al.Array2D.no_mask(values=data_model, pixel_scales=config.pixel_scale),
         noise_map=al.Array2D.no_mask(values=noise_model, pixel_scales=config.pixel_scale),
+        # FITS PSFs use detector row order, just like the science/noise images.
         psf=al.Kernel2D.no_mask(
-            values=psf, pixel_scales=config.pixel_scale, normalize=True
+            values=np.flipud(psf).copy(), pixel_scales=config.pixel_scale, normalize=True
         ),
     )
     mask = al.Mask2D.circular(

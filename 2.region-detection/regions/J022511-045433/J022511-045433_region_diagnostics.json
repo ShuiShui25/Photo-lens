@@ -1,0 +1,297 @@
+{
+  "system": "J022511-045433",
+  "version": "single-pass-unbounded-growth",
+  "status": "complete",
+  "figure": "2.region-detection/regions/J022511-045433/J022511-045433_selection_diagnostics.png",
+  "centre_definition": "All apertures share the fitted lens-light centre (detector pixels, zero based).",
+  "source_image": "FitImaging lens-plane-subtracted image (lens and modeled satellites removed)",
+  "model_stage": 4,
+  "lens_method": "mge_isophote",
+  "lens_scale": 1.0,
+  "lens_initial_area_pix": 64,
+  "lens_area_pix": 64,
+  "anchors": {
+    "definition": "brightest residual-S/N pixel of every 4.0-sigma SExtractor component of the lens-plane-subtracted image",
+    "detect_sigma": 4.0,
+    "core_radius_pix": 3.8555999060522836,
+    "core_radius_fwhm": 0.5,
+    "anchor_min_component_area_pix": 20,
+    "fitted_einstein_radius_pix": 9.954114761564329,
+    "einstein_radius_definition": "PowerLaw einstein_radius parameter (EINRAD), not a mean-convergence radius",
+    "psf_fwhm_pix": 7.711199812104567,
+    "protected_anchor_count": 2,
+    "components": [
+      {
+        "component_index_1based": 1,
+        "area_pix": 201,
+        "bbox": {
+          "crop_xmin": 27,
+          "crop_xmax": 42,
+          "crop_ymin": 25,
+          "crop_ymax": 41,
+          "full_xmin": 212,
+          "full_xmax": 227,
+          "full_ymin": 209,
+          "full_ymax": 225
+        },
+        "peak_crop_x": 36,
+        "peak_crop_y": 33,
+        "peak_full_x": 221,
+        "peak_full_y": 217,
+        "peak_residual_snr": 58.61099407351279,
+        "component_integrated_snr": 236.3709569755127,
+        "peak_radius_pix": 7.207103827779785,
+        "peak_radius_over_einstein_radius": 0.7240326237355094,
+        "contains_lens_centre_pixel": true,
+        "fate": "anchor",
+        "reason": "protected source peak"
+      },
+      {
+        "component_index_1based": 2,
+        "area_pix": 103,
+        "bbox": {
+          "crop_xmin": 12,
+          "crop_xmax": 22,
+          "crop_ymin": 18,
+          "crop_ymax": 30,
+          "full_xmin": 197,
+          "full_xmax": 207,
+          "full_ymin": 202,
+          "full_ymax": 214
+        },
+        "peak_crop_x": 16,
+        "peak_crop_y": 23,
+        "peak_full_x": 201,
+        "peak_full_y": 207,
+        "peak_residual_snr": 33.92914739681166,
+        "component_integrated_snr": 128.29734673881177,
+        "peak_radius_pix": 15.153822221897633,
+        "peak_radius_over_einstein_radius": 1.5223676424156627,
+        "contains_lens_centre_pixel": false,
+        "fate": "anchor",
+        "reason": "protected source peak"
+      }
+    ],
+    "components_label_image": "J022511-045433_components_4.0sigma.fits"
+  },
+  "lens_contact": {
+    "contact_distance_pix": 3.8555999060522836,
+    "contact_distance_fwhm": 0.5,
+    "anchor_min_distance_pix": 3.1622776601683795,
+    "fallback_smallest_envelope": true,
+    "warning": "no envelope keeps the required distance from every anchor; the smallest envelope was used",
+    "unconstrained_einstein_area_pix": 309
+  },
+  "source_selection": {
+    "definition": "single selection: every component (or configured merge group) grown by hysteresis with an empty lens mask (growth creating self-reflection overlap rejected), r_s-classified against the lens aperture, carved against other components (uncarved 4-sigma segmentation) and satellites (direct and reflected, continuous unit cells) and against its own reflection, largest 4-connected piece, hard gates, maximum effective S/N F_diff / sqrt(sigma_stat^2 + (eps * |M_lens|)^2)",
+    "ranking_metric": "effective_snr",
+    "effective_snr_epsilon": 0.015,
+    "detect_sigma": 4.0,
+    "grow_sigma_ratio": 0.5,
+    "max_grow_area_ratio": null,
+    "rs_threshold": 0.4,
+    "merge_group_1based": null,
+    "hard_gates": {
+      "minimum_area_pix": 20,
+      "minimum_integrated_snr": 15.0,
+      "minimum_carving_snr_retention": 0.7,
+      "contains_lens_centre": false
+    },
+    "display_only": {
+      "mirror_asymmetry_reference": 0.6,
+      "neighbour_flux_change_reference": 0.25,
+      "holes": "visualised and warned, not gated"
+    },
+    "candidates": [
+      {
+        "candidate": "component_1",
+        "members_1based": [
+          1
+        ],
+        "seed_area_pix": 201,
+        "grown": true,
+        "grown_area_pix": 547,
+        "lens_overlap_pix": 64,
+        "rs_reliable_overlap_pix": 36,
+        "rs_accepted_overlap_pix": 0,
+        "area_before_carving_pix": 483,
+        "integrated_snr_before_carving": 225.65277142024686,
+        "carved_direct_pix": 103,
+        "carved_mirror_on_others_or_satellite_pix": 60,
+        "carved_self_overlap_pix": 245,
+        "pieces_after_carving": 5,
+        "area_after_carving_pix": 38,
+        "integrated_snr_after_carving": 35.63400501859567,
+        "snr_retention": 0.15791521103116568,
+        "hole_pixel_count": 0,
+        "passes_hard_gates": false,
+        "fate": "discarded",
+        "reasons": [
+          "carving kept 0.16 of the integrated S/N (< 0.7)"
+        ],
+        "effective_snr": 24.30855542056969,
+        "difference_flux": 5.848821695959285,
+        "statistical_flux_error": 0.239225913930859,
+        "lens_model_flux": -1.7165209246706954,
+        "region_flux": 6.0277864987278535,
+        "lens_model_flux_fraction": 0.2847680363319043,
+        "mirror_asymmetry": 0.9703100295927305,
+        "effective_snr_epsilon": 0.015
+      },
+      {
+        "candidate": "component_2",
+        "members_1based": [
+          2
+        ],
+        "seed_area_pix": 103,
+        "grown": false,
+        "grown_area_pix": 103,
+        "lens_overlap_pix": 0,
+        "rs_reliable_overlap_pix": 0,
+        "rs_accepted_overlap_pix": 0,
+        "area_before_carving_pix": 103,
+        "integrated_snr_before_carving": 128.29734673881177,
+        "carved_direct_pix": 0,
+        "carved_mirror_on_others_or_satellite_pix": 41,
+        "carved_self_overlap_pix": 0,
+        "pieces_after_carving": 1,
+        "area_after_carving_pix": 62,
+        "integrated_snr_after_carving": 121.14386633727209,
+        "snr_retention": 0.9442429591618697,
+        "hole_pixel_count": 0,
+        "passes_hard_gates": true,
+        "fate": "selected",
+        "reasons": [],
+        "effective_snr": 78.86164915702605,
+        "difference_flux": 24.112061721313875,
+        "statistical_flux_error": 0.30557109387072673,
+        "lens_model_flux": -0.6999725767514655,
+        "region_flux": 26.175723905724578,
+        "lens_model_flux_fraction": 0.026741288197893277,
+        "mirror_asymmetry": 0.9211612182401043,
+        "effective_snr_epsilon": 0.015
+      }
+    ],
+    "neighbour_threshold_diagnostic": {
+      "3.75": {
+        "area_pix": 62,
+        "region_flux": 25.15110558514587,
+        "integrated_snr": 116.40183034537502,
+        "relative_flux_change": 0.039143838935229026
+      },
+      "4.25": {
+        "area_pix": 62,
+        "region_flux": 26.175723905724578,
+        "integrated_snr": 121.14386633727209,
+        "relative_flux_change": 0.0
+      }
+    }
+  },
+  "selected": {
+    "threshold_sigma": 4.0,
+    "area_pix": 62,
+    "integrated_snr": 121.14386633727209,
+    "effective_snr": 78.86164915702605,
+    "effective_snr_epsilon": 0.015,
+    "mirror_asymmetry": 0.9211612182401043,
+    "lens_model_flux_fraction": 0.026741288197893277,
+    "symmetric_overlap_fraction": 0.0,
+    "hole_pixel_count": 0,
+    "final_lens_overlap_pix": 0,
+    "contains_lens_centre": false,
+    "neighbour_flux_change_diagnostic": 0.039143838935229026,
+    "selected_candidate": "component_2",
+    "selected_members_1based": [
+      2
+    ],
+    "area_before_carving_pix": 103,
+    "snr_retention": 0.9442429591618697,
+    "passes_all_hard_gates": true
+  },
+  "satellites": {
+    "applied": false,
+    "manifest": "1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_satellite_light_manifest.json",
+    "selection_rule": "highest connected satellite-only model isophote containing or nearest the fitted centre, with >=5 pixels and retaining >=50% of the positive model flux inside the original 1-sigma mask",
+    "threshold_model_snr": 1.0,
+    "degeneracy_gate": {
+      "min_peak_model_snr": 2.5,
+      "max_half_light_radius_pix": 6.0,
+      "rejected_count": 1
+    },
+    "compact_current_mask_flux_retention": 0.5,
+    "compact_threshold_step_sigma": 0.05,
+    "satellite_count_in_manifest": 1,
+    "selected_satellite_count": 0,
+    "current_1sigma_union_area_pix": 0,
+    "compact_union_area_pix": 0,
+    "compact_union_area_reduction_pix": 0,
+    "compact_union_area_reduction_fraction": 0.0,
+    "satellites": [
+      {
+        "index": 0,
+        "selected": false,
+        "reason": "degenerate satellite light model: peak model S/N 1.90 (min 2.5) and half-light radius 8.13 px (max 6.0); the fitted component is diffuse rather than a compact companion, so no exclusion aperture is emitted",
+        "peak_model_snr": 1.9039003966080807,
+        "half_light_radius_pix": 8.130782170697247,
+        "one_sigma_area_pix": 156,
+        "model": "1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_satellite_0_light_model_wcs.fits"
+      }
+    ]
+  },
+  "background": {
+    "definition": "180-degree point reflection of the final source mask about the same model lens-light centre used for source and lens selection",
+    "reflection_centre_metadata": {
+      "method": "latest_modeled_lens_light_wcs_centre",
+      "rule": "source, lens and reflected background share one centre; the reflection centre is never taken from a separate definition",
+      "positions_gui_comparison": {
+        "available": true,
+        "centre_crop_x": 29.55529400008163,
+        "centre_crop_y": 29.908192999969287,
+        "distance_from_model_centre_pix": 0.09041956274114236,
+        "metadata": {
+          "positions_file": "data/bb/J022511-045433/positions_gui.txt",
+          "input_fits": "data/bb/J022511-045433/science/HSC-R.fits",
+          "method": "variance_weighted_point_antisymmetry_minimum",
+          "centre_value_source": "PIXEL_LENS_LIGHT_CENTRE_FLOAT",
+          "subpixel_antisymmetry_centre_available": true,
+          "input_row_y_zero_indexed": 213.908193,
+          "input_col_x_zero_indexed": 214.555294,
+          "ra_deg": 36.2960086551486,
+          "dec_deg": -4.909323048795269,
+          "product_full_x_zero_indexed": 214.55529400008163,
+          "product_full_y_zero_indexed": 213.9081929999693,
+          "product_crop_x_zero_indexed": 29.55529400008163,
+          "product_crop_y_zero_indexed": 29.908192999969287
+        }
+      }
+    },
+    "centre_crop_x": 29.5319848014378,
+    "centre_crop_y": 29.82082951454842,
+    "model_to_background_centre_distance_pix": 0.0,
+    "source_area_pix": 62,
+    "background_area_pix_full_detector": 62,
+    "background_area_pix_in_analysis_crop": 62,
+    "background_pixels_outside_analysis_crop": 0,
+    "background_pixels_outside_model_mask": 0,
+    "final_ds9_region_clipped_by_model_mask": false,
+    "source_background_overlap_pix": 0,
+    "background_lens_overlap_pix": 0,
+    "background_satellite_overlap_pix": 0,
+    "background_secondary_overlap_pix": 0,
+    "region_file": "J022511-045433_background_v2.reg"
+  },
+  "readback": {
+    "source": {
+      "missing_after_readback_pix": 0,
+      "extra_after_readback_pix": 0
+    },
+    "lens": {
+      "missing_after_readback_pix": 0,
+      "extra_after_readback_pix": 0
+    }
+  },
+  "warnings": [
+    "lens: no MGE envelope keeps 0.5 FWHM from every anchor; smallest envelope used (min anchor distance 3.16 px < 3.86 px)"
+  ],
+  "error": null
+}

@@ -1,15 +1,15 @@
 {
   "analysis_backend": "jax",
   "autofit_number_of_cores": 1,
-  "fit_preview": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/stage_previews/stage4_fit.png",
+  "fit_preview": "stage_previews/stage4_fit.png",
   "jax_platform": "gpu",
   "likelihood_schema": "imaging_figure_of_merit_v1",
-  "log_evidence": 2720.653143868141,
+  "log_evidence": 2771.1040631335063,
   "nautilus_n_batch": 5,
   "pipeline_revision": "photo_lens_unified_hsc_cfht_cbz_v1",
   "posterior_transfer": {
     "dimensions": 20,
-    "manifest": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/stage3_to_stage4_posterior.json",
+    "manifest": "stage3_to_stage4_posterior.json",
     "method": "weighted_empirical_marginals_plus_gaussian_copula",
     "parameters": [
       "galaxies.lens.bulge.profile_list.29.centre.centre_0",
@@ -34,7 +34,7 @@
       "galaxies.satellite_0.bulge.profile_list.29.ell_comps.ell_comps_1"
     ]
   },
-  "reduced_chi_squared": 1.3875979208679337,
+  "reduced_chi_squared": 1.3666841093388056,
   "settings_inversion": {
     "maxiter": 250,
     "no_regularization_add_to_curvature_diag_value": 0.001,
@@ -71,15 +71,19 @@
   "system": "J022511-045433",
   "upstream_stage3": {
     "identifier": "386eef5dffa390f07f791509d3020d4d",
-    "search_name": "stage3_double_source_jpf78a399789_5a904fda86"
+    "search_name": "stage3_double_source_jpf78a399789_cf08051eae"
   },
   "wcs_products": {
-    "centre": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_centre_wcs.json",
-    "intrinsic": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_intrinsic_wcs.fits",
-    "manifest": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_wcs_product_manifest.json",
-    "mge_components": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_mge_components_wcs.fits",
-    "model": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_model_wcs.fits",
-    "qa": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_wcs_product_qa.json",
-    "reduced": "/home/geng/Codes/Photo-lens/1.lens-modeling/J022511-045433/output/wcs_products_stage4/J022511-045433_lens_light_reduced_wcs.fits"
+    "autolens_lens_light_subtracted": "wcs_products_stage4/J022511-045433_autolens_lens_light_subtracted_wcs.fits",
+    "autolens_lens_plane_model": "wcs_products_stage4/J022511-045433_autolens_lens_plane_model_wcs.fits",
+    "centre": "wcs_products_stage4/J022511-045433_lens_light_centre_wcs.json",
+    "exact_fit_qa": "wcs_products_stage4/J022511-045433_exact_fit_plane_qa.json",
+    "exact_main_lens_model": "wcs_products_stage4/J022511-045433_lens_light_model_wcs.fits",
+    "intrinsic": "wcs_products_stage4/J022511-045433_lens_light_intrinsic_wcs.fits",
+    "manifest": "wcs_products_stage4/J022511-045433_wcs_product_manifest.json",
+    "mge_components": "wcs_products_stage4/J022511-045433_lens_mge_components_wcs.fits",
+    "model": "wcs_products_stage4/J022511-045433_lens_light_model_wcs.fits",
+    "qa": "wcs_products_stage4/J022511-045433_wcs_product_qa.json",
+    "reduced": "wcs_products_stage4/J022511-045433_lens_light_reduced_wcs.fits"
   }
 }

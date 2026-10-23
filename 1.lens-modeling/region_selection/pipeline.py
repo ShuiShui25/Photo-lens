@@ -19,6 +19,7 @@ import numpy as np
 from astropy.io import fits
 from astropy.visualization import AsinhStretch, ImageNormalize, PercentileInterval
 from astropy.wcs import WCS
+from regions import Regions
 from scipy.ndimage import gaussian_filter, label as connected_labels
 from skimage.draw import polygon
 from skimage.feature import peak_local_max
@@ -29,7 +30,7 @@ DS9_HEADER = (
     "# Region file format: DS9 version 4.1\n"
     "global color=green dashlist=8 3 width=1 font=\"helvetica 10 normal roman\" "
     "select=1 highlite=1 dash=0 fixed=0 edit=1 move=1 delete=1 include=1 source=1\n"
-    "fk5\n"
+    "icrs\n"
 )
 
 
@@ -470,17 +471,14 @@ def select_central_lens_mask(segmentation: np.ndarray, product: Product) -> np.n
 def parse_ds9_polygon(reference_path: Path | None, product: Product) -> np.ndarray | None:
     if reference_path is None or not reference_path.exists():
         return None
-    text = reference_path.read_text()
-    match = re.search(r"polygon\((.*?)\)", text, flags=re.IGNORECASE | re.DOTALL)
-    if not match:
+    regions = Regions.read(reference_path, format='ds9')
+    if not regions:
         raise ValueError(f"No polygon found in reference region: {reference_path}")
-    values = np.asarray([float(value) for value in match.group(1).split(",")]).reshape(-1, 2)
-    px, py = product.wcs.world_to_pixel_values(values[:, 0], values[:, 1])
-    px -= product.x0
-    py -= product.y0
     mask = np.zeros(product.data.shape, dtype=bool)
-    rr, cc = polygon(py, px, shape=mask.shape)
-    mask[rr, cc] = True
+    for region in regions:
+        pixel = region.to_pixel(product.wcs) if hasattr(region, 'to_pixel') else region
+        rr, cc = polygon(pixel.vertices.y-product.y0, pixel.vertices.x-product.x0, shape=mask.shape)
+        mask[rr, cc] = True
     return mask
 
 
@@ -508,7 +506,8 @@ def write_ds9_regions(
     lines = [DS9_HEADER]
     for mask, label, color in zip(masks, labels, colors, strict=True):
         for xy in _mask_contours_full_pixel(mask, product):
-            ra, dec = product.wcs.pixel_to_world_values(xy[:, 0], xy[:, 1])
+            sky = product.wcs.celestial.pixel_to_world(xy[:, 0], xy[:, 1]).icrs
+            ra, dec = sky.ra.deg, sky.dec.deg
             coordinates = ",".join(f"{value:.8f}" for pair in zip(ra, dec, strict=True) for value in pair)
             lines.append(f"polygon({coordinates}) # color={color} text={{{label}}}\n")
     path.write_text("".join(lines))
@@ -541,9 +540,10 @@ def write_point_reflected_ds9_region(
             2.0 * centre_x - xy[:, 0],
             2.0 * centre_y - xy[:, 1],
         ))
-        ra, dec = product.wcs.pixel_to_world_values(
+        sky = product.wcs.celestial.pixel_to_world(
             reflected_xy[:, 0], reflected_xy[:, 1]
-        )
+        ).icrs
+        ra, dec = sky.ra.deg, sky.dec.deg
         coordinates = ",".join(
             f"{value:.8f}"
             for pair in zip(ra, dec, strict=True)

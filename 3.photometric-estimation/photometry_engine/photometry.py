@@ -105,6 +105,39 @@ def _region_union_weights(regions_pix, image_shape, subpixels, mode="subpixels")
     return union
 
 
+def _geometric_overlap_area(source_pix, background_pix, source_weights,
+                            background_weights, subpixels: int) -> float:
+    """Area (pixels) sampled inside both apertures, on the shared candidate pixels."""
+    from matplotlib.path import Path as PolygonPath
+
+    def paths(regions_pix):
+        out = []
+        for region in regions_pix:
+            if not hasattr(region, "vertices"):
+                return None
+            out.append(PolygonPath(np.column_stack((region.vertices.x, region.vertices.y))))
+        return out
+
+    source_paths, background_paths = paths(source_pix), paths(background_pix)
+    candidates = np.argwhere((source_weights > 0) & (background_weights > 0))
+    if source_paths is None or background_paths is None or len(candidates) == 0:
+        return float(np.minimum(source_weights, background_weights).sum())
+    n = int(subpixels)
+    offsets = (np.arange(n) + 0.5) / n - 0.5
+    ox, oy = np.meshgrid(offsets, offsets)
+    total = 0
+    for row, col in candidates:
+        points = np.column_stack((col + ox.ravel(), row + oy.ravel()))
+        inside_s = np.zeros(len(points), dtype=bool)
+        for path in source_paths:
+            inside_s |= path.contains_points(points)
+        inside_b = np.zeros(len(points), dtype=bool)
+        for path in background_paths:
+            inside_b |= path.contains_points(points)
+        total += int(np.sum(inside_s & inside_b))
+    return total / float(n * n)
+
+
 def _nb_pixel_shift(image_wcs, centre: dict) -> tuple[float, float]:
     bb_x, bb_y = image_wcs.world_to_pixel_values(
         float(centre["bb_ra_deg"]), float(centre["bb_dec_deg"])
@@ -287,7 +320,7 @@ def _jobs(config: PipelineConfig) -> list[ImageJob]:
                     ))
                 continue
 
-        # fixed042-coadd fallback: calibrated science plus inverse-variance map.
+        # Coadded-image fallback: calibrated science plus inverse-variance map.
         coadd_dir = config.nb_coadd_dir / wave / str(config.lens_id)
         if not coadd_dir.is_dir():
             coadd_dir = config.nb_coadd_dir / band
@@ -487,6 +520,14 @@ def run_photometry(config: PipelineConfig) -> PhotometryProducts:
                 continue
 
             overlap = float(np.minimum(source_weights, background_weights).sum())
+            if overlap > 1e-6:
+                # min(weights) also counts a coarse pixel that two *adjacent*
+                # polygons each cover in part.  Only a true geometric overlap
+                # (a subpixel sample inside both apertures) is an error.
+                overlap = _geometric_overlap_area(
+                    source_pix, background_pix, source_weights, background_weights,
+                    config.aperture_subpixels,
+                )
             if overlap > 1e-6:
                 raise ValueError(
                     f"Source/background overlap by {overlap:.6g} pixels: {job.path}"

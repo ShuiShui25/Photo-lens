@@ -1,8 +1,8 @@
 {
   "component_sum_relative_l2": 0.0,
   "convolved_centroid_fits_yx": [
-    213.34808808652198,
-    214.5846268173222
+    213.31770621962437,
+    214.57082385205206
   ],
   "detector_shape": [
     429,
@@ -10,18 +10,18 @@
   ],
   "finite_model_pixels": 1141,
   "intrinsic_centroid_fits_yx": [
-    213.3303545336163,
-    214.79391336232894
+    213.31192358833334,
+    214.53366538809962
   ],
-  "mapping_roundtrip_max_abs_arcsec": 1.85268467234323e-15,
+  "mapping_roundtrip_max_abs_arcsec": 1.9897278269453977e-15,
   "mapping_schema": "autolens-y-up_to_fits-row-up-v2",
   "mge_schema": "lens-mge-v2-seven-column-full-detector",
   "profile_centre_fits_xy": [
-    214.79204751727653,
-    213.33173765782877
+    214.53129770911013,
+    213.3174226369874
   ],
   "psf_centroid_offset_fits_yx_pix": [
-    0.01773355250073294,
-    -0.2092865447796406
+    0.0057826309003594645,
+    0.03715846406868906
   ]
 }

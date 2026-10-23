@@ -8,7 +8,7 @@
     1.0
   ],
   "official_nb_weight": 1.0,
-  "p_source_gt_lens": 0.9997479360184062,
+  "p_source_gt_lens": 0.969538579129886,
   "p_source_gt_lens_definition": "integral dz_l p_l(z_l) integral_{z_l}^infinity dz_s p_s(z_s), using trapezoidal integration of normalized BCNz p(z)",
   "nb_aperture_centre_table": "3.photometric-estimation/nb-centres/J022511-045433/J022511-045433_nb_antisymmetry_centres.csv",
   "nb_aperture_shift_mode": "per_band_antisymmetry_centre_relative_to_positions_gui_bb",
@@ -60,7 +60,7 @@
     "subaru_y"
   ],
   "excluded_bands": [],
-  "elapsed_seconds": 222.53833389282227,
+  "elapsed_seconds": 184.67458415031433,
   "manifest": "3.photometric-estimation/results/J022511-045433/input_manifest.csv",
   "figures": {
     "final_lens_photoz_sed": "3.photometric-estimation/results/J022511-045433/final_photoz_sed_lens_J022511-045433_wNB1.png",
@@ -73,9 +73,9 @@
     "correlated_noise_measured_over_naive": 2.410022216313154
   },
   "mask_validation": {
-    "max_delta_11_41_over_error": 0.02847000647804293,
-    "n_mask_rows": 147,
-    "n_nb_exposures": 142,
+    "max_delta_11_41_over_error": 0.022480317994172043,
+    "n_mask_rows": 146,
+    "n_nb_exposures": 141,
     "n_cfht_exposures": 5
   },
   "outputs": [
@@ -142,6 +142,7 @@
     "3.photometric-estimation/results/J022511-045433/photoz_redshift_grid.csv",
     "3.photometric-estimation/results/J022511-045433/photoz_variant_summary.csv",
     "3.photometric-estimation/results/J022511-045433/pz.png",
+    "3.photometric-estimation/results/J022511-045433/pz_specz.png",
     "3.photometric-estimation/results/J022511-045433/redshift_order_probability.csv",
     "3.photometric-estimation/results/J022511-045433/run_complete.json",
     "3.photometric-estimation/results/J022511-045433/source_fixed_specz_model.csv",

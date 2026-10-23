@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-import hashlib
 import json
 import os
 from pathlib import Path
@@ -10,7 +9,6 @@ import autolens as al
 import numpy as np
 from astropy.io import fits
 from astropy.wcs import WCS
-from scipy.signal import convolve
 
 
 MGE_SCHEMA = "lens-mge-v2-seven-column-full-detector"
@@ -318,23 +316,6 @@ def write_exact_fit_plane_products(
     }
 
 
-def _full_detector_grid(bundle, config):
-    grid = al.Grid2D.uniform(
-        shape_native=bundle.data_native.shape,
-        pixel_scales=config.pixel_scale,
-        over_sample_size=1,
-    )
-    if config.over_sample:
-        over_sample_size = al.util.over_sample.over_sample_size_via_radial_bins_from(
-            grid=grid,
-            sub_size_list=[4, 2, 1],
-            radial_list=[0.8, 1.5],
-            centre_list=[bundle.light_centre_yx],
-        )
-        grid = grid.apply_over_sampling(over_sample_size=over_sample_size)
-    return grid
-
-
 def _psf_centroid_offset(psf: np.ndarray) -> tuple[float, float]:
     values = np.asarray(psf, dtype=float)
     yy, xx = np.indices(values.shape, dtype=float)
@@ -343,34 +324,6 @@ def _psf_centroid_offset(psf: np.ndarray) -> tuple[float, float]:
         float((values * yy).sum() / total - 0.5 * (values.shape[0] - 1)),
         float((values * xx).sum() / total - 0.5 * (values.shape[1] - 1)),
     )
-
-
-def _centroid_yx(image: np.ndarray) -> tuple[float, float]:
-    values = np.asarray(image, dtype=float)
-    yy, xx = np.indices(values.shape, dtype=float)
-    total = float(values.sum())
-    return float((values * yy).sum() / total), float((values * xx).sum() / total)
-
-
-def render_full_detector_components(profiles, bundle, config):
-    """Render intrinsic and PSF-convolved MGE components on the detector.
-
-    Rendering occurs on the full, unmasked AutoLens grid.  Only after the
-    convolution is complete are rows flipped once into FITS-array order.  No
-    bounding-box inference or shape-centering operation is involved.
-    """
-    grid = _full_detector_grid(bundle, config)
-    psf = _native(bundle.dataset.psf)
-    intrinsic_model_order = []
-    convolved_model_order = []
-    for profile in profiles:
-        intrinsic = _native(profile.image_2d_from(grid=grid))
-        blurred = convolve(intrinsic, psf, mode="same", method="fft")
-        intrinsic_model_order.append(intrinsic)
-        convolved_model_order.append(blurred)
-    intrinsic_fits = np.flip(np.asarray(intrinsic_model_order), axis=1)
-    convolved_fits = np.flip(np.asarray(convolved_model_order), axis=1)
-    return intrinsic_fits, convolved_fits, psf
 
 
 def _profile_table(profiles) -> fits.BinTableHDU:
@@ -386,234 +339,129 @@ def _profile_table(profiles) -> fits.BinTableHDU:
     return fits.BinTableHDU.from_columns(columns, name="COMPONENTS")
 
 
-def _sha256(path: Path | None) -> str | None:
-    if path is None or not path.is_file():
-        return None
-    digest = hashlib.sha256()
-    with path.open("rb") as stream:
-        for block in iter(lambda: stream.read(1024 * 1024), b""):
-            digest.update(block)
-    return digest.hexdigest()
-
-
-def write_wcs_products_from_profiles(
-    *,
-    profiles,
-    einstein_radius: float,
-    bundle,
-    config,
-    stage: int,
-    output_name: str,
-    tracer_path: Path | None = None,
-) -> dict[str, Path]:
-    expected = config.lens_gaussians_per_basis * config.lens_bases
-    if len(profiles) != expected:
-        raise ValueError(f"expected {expected} main-lens Gaussians, found {len(profiles)}")
-    centres = np.asarray([p.centre for p in profiles], dtype=float)
-    if not np.allclose(centres, centres[0], atol=1.0e-10, rtol=0.0):
-        raise ValueError("main-lens MGE profiles do not share one physical centre")
-
-    output = config.output_dir / output_name
-    output.mkdir(parents=True, exist_ok=True)
-    centre_yx = tuple(map(float, centres[0]))
-    x_pixel, y_pixel = autolens_to_fits_pixel(
-        centre_yx, bundle.data_native.shape, config.pixel_scale
-    )
-    roundtrip = fits_pixel_to_autolens(
-        (x_pixel, y_pixel), bundle.data_native.shape, config.pixel_scale
-    )
-    if not np.allclose(roundtrip, centre_yx, atol=1.0e-12, rtol=0.0):
-        raise RuntimeError("AutoLens/FITS detector-coordinate round trip failed")
-    ra_deg, dec_deg = WCS(bundle.wcs_header).pixel_to_world_values(x_pixel, y_pixel)
-
-    intrinsic_cube, component_cube, psf = render_full_detector_components(
-        profiles, bundle, config
-    )
-    intrinsic_model = intrinsic_cube.sum(axis=0)
-    lens_light_model = component_cube.sum(axis=0)
-    reconstruction = component_cube.sum(axis=0)
-    relative_l2 = float(
-        np.linalg.norm(reconstruction - lens_light_model)
-        / max(np.linalg.norm(lens_light_model), 1.0e-30)
-    )
-    if relative_l2 > 1.0e-12:
-        raise RuntimeError(f"MGE component reconstruction failed: relative L2={relative_l2}")
-
-    outside_mask = np.asarray(bundle.detector_mask_native, dtype=bool)
-    if outside_mask.shape != bundle.data_native.shape:
-        raise RuntimeError("full-detector mask shape does not match science data")
-    model_product = lens_light_model.copy()
-    reduced_product = bundle.data_native - lens_light_model
-    intrinsic_product = intrinsic_model.copy()
-    component_product = component_cube.copy()
-    model_product[outside_mask] = np.nan
-    reduced_product[outside_mask] = np.nan
-    intrinsic_product[outside_mask] = np.nan
-    component_product[:, outside_mask] = np.nan
-
-    psf_model_dy, psf_model_dx = _psf_centroid_offset(psf)
-    # A y offset in AutoLens array order changes sign after the final flip.
-    psf_fits_dy, psf_fits_dx = -psf_model_dy, psf_model_dx
-    intrinsic_centroid = _centroid_yx(intrinsic_model)
-    convolved_centroid = _centroid_yx(lens_light_model)
-
-    model_path = output / f"{config.system}_lens_light_model_wcs.fits"
-    reduced_path = output / f"{config.system}_lens_light_reduced_wcs.fits"
-    intrinsic_path = output / f"{config.system}_lens_light_intrinsic_wcs.fits"
-    common_metadata = {
-        "STAGE": stage,
-        "MAPSCHEM": "AL2FITS2",
-        "PSFDY": psf_fits_dy,
-        "PSFDX": psf_fits_dx,
-    }
-    _write_image(
-        model_path,
-        model_product,
-        bundle.wcs_header,
-        PRODUCT="LENS_LIGHT_MODEL",
-        **common_metadata,
-    )
-    _write_image(
-        intrinsic_path,
-        intrinsic_product,
-        bundle.wcs_header,
-        PRODUCT="LENS_LIGHT_INTRINSIC",
-        **common_metadata,
-    )
-    _write_image(
-        reduced_path,
-        reduced_product,
-        bundle.wcs_header,
-        PRODUCT="DATA_MINUS_LENS_LIGHT",
-        **common_metadata,
-    )
-
-    component_path = output / f"{config.system}_lens_mge_components_wcs.fits"
-    component_header = _primary_header(bundle.wcs_header)
-    component_header["PRODUCT"] = "LENS_MGE_COMPONENTS"
-    component_header["STAGE"] = stage
-    component_header["NGAUSS"] = len(profiles)
-    component_header["RELL2"] = relative_l2
-    component_header["EINRAD"] = float(einstein_radius)
-    component_header["MGESCHEM"] = "MGE7FULL"
-    component_header["MAPSCHEM"] = "AL2FITS2"
-    _atomic_fits_write(
-        fits.HDUList(
-            [
-                fits.PrimaryHDU(data=component_product.astype(np.float32), header=component_header),
-                _profile_table(profiles),
-                fits.ImageHDU(data=intrinsic_cube.astype(np.float32), name="INTRINSIC"),
-            ]
-        ),
-        component_path,
-    )
-
-    centre_path = output / f"{config.system}_lens_light_centre_wcs.json"
-    centre_payload = {
-        "system": config.system,
-        "stage": stage,
-        "mapping_schema": DETECTOR_MAPPING_SCHEMA,
-        "autolens_y_arcsec": centre_yx[0],
-        "autolens_x_arcsec": centre_yx[1],
-        "fits_x_pixel_zero_indexed": float(x_pixel),
-        "fits_y_pixel_zero_indexed": float(y_pixel),
-        "ra_deg": float(ra_deg),
-        "dec_deg": float(dec_deg),
-        "intrinsic_model_centroid_fits_yx": list(map(float, intrinsic_centroid)),
-        "convolved_model_centroid_fits_yx": list(map(float, convolved_centroid)),
-        "psf_centroid_offset_model_yx_pix": [psf_model_dy, psf_model_dx],
-        "psf_centroid_offset_fits_yx_pix": [psf_fits_dy, psf_fits_dx],
-        "reduced_image_definition": (
-            f"science data minus full-detector PSF-convolved stage-{stage} lens-plane light model"
-        ),
-    }
-    centre_path.write_text(
-        json.dumps(centre_payload, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-
-    qa_path = output / f"{config.system}_wcs_product_qa.json"
-    qa = {
-        "component_sum_relative_l2": relative_l2,
-        "detector_shape": list(bundle.data_native.shape),
-        "finite_model_pixels": int(np.count_nonzero(~outside_mask)),
-        "mapping_roundtrip_max_abs_arcsec": float(
-            np.max(np.abs(np.asarray(roundtrip) - np.asarray(centre_yx)))
-        ),
-        "profile_centre_fits_xy": [float(x_pixel), float(y_pixel)],
-        "intrinsic_centroid_fits_yx": list(map(float, intrinsic_centroid)),
-        "convolved_centroid_fits_yx": list(map(float, convolved_centroid)),
-        "psf_centroid_offset_fits_yx_pix": [psf_fits_dy, psf_fits_dx],
-        "mge_schema": MGE_SCHEMA,
-        "mapping_schema": DETECTOR_MAPPING_SCHEMA,
-    }
-    qa_path.write_text(json.dumps(qa, indent=2, sort_keys=True) + "\n", encoding="utf-8")
-
-    manifest_path = output / f"{config.system}_wcs_product_manifest.json"
-    manifest = {
-        "system": config.system,
-        "stage": stage,
-        "tracer_path": str(tracer_path.resolve()) if tracer_path else None,
-        "tracer_sha256": _sha256(tracer_path),
-        "science_path": str(config.science_cutout),
-        "science_sha256": _sha256(config.science_cutout),
-        "psf_path": str(config.psf),
-        "psf_sha256": _sha256(config.psf),
-        "mge_schema": MGE_SCHEMA,
-        "mapping_schema": DETECTOR_MAPPING_SCHEMA,
-        "products": {
-            "centre": str(centre_path),
-            "model": str(model_path),
-            "intrinsic": str(intrinsic_path),
-            "reduced": str(reduced_path),
-            "mge_components": str(component_path),
-            "qa": str(qa_path),
-        },
-    }
-    manifest_path.write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n", encoding="utf-8"
-    )
-    return {
-        "centre": centre_path,
-        "model": model_path,
-        "intrinsic": intrinsic_path,
-        "reduced": reduced_path,
-        "mge_components": component_path,
-        "qa": qa_path,
-        "manifest": manifest_path,
-    }
-
-
 def write_wcs_products(
     result, bundle, config, *, stage: int = 3, output_name: str = "wcs_products"
 ) -> dict[str, Path]:
     fit = result.max_log_likelihood_fit
-    instance = result.max_log_likelihood_instance
-    fitted_light_model = fit.model_obj_linear_light_profiles_to_light_profiles
-    profiles = list(fitted_light_model.galaxies.lens.bulge.profile_list)
+    tracer = fit.model_obj_linear_light_profiles_to_light_profiles
     tracer_path = None
     try:
         tracer_path = Path(result.search.paths.files_path) / "tracer.json"
     except Exception:
         pass
-    products = write_wcs_products_from_profiles(
-        profiles=profiles,
-        einstein_radius=float(instance.galaxies.lens.mass.einstein_radius),
-        bundle=bundle,
-        config=config,
-        stage=stage,
-        output_name=output_name,
-        tracer_path=tracer_path,
-    )
-    # Overwrite the re-rendered main-lens product and add full-plane products
-    # using the literal maximum-likelihood FitImaging arrays.  This eliminates
-    # the half-pixel parity ambiguity of independent full-detector rendering.
-    products.update(
-        write_exact_fit_plane_products(
-            fit=fit,
-            bundle=bundle,
-            config=config,
-            stage=stage,
-            output_name=output_name,
-        )
-    )
-    return products
+    return write_consistent_fit_products(
+        fit, tracer, bundle, config, stage=stage,
+        output_dir=config.output_dir / output_name, tracer_path=tracer_path)
+
+
+def write_consistent_fit_products(fit, tracer, bundle, config, *, stage,
+                                  output_dir, tracer_path=None):
+    """Export all light components and centres on the actual likelihood grid.
+
+    A separate full-detector grid can have a different subpixel origin after
+    masking or FFT padding. Profiles, convolution and coordinate conversion
+    must therefore share the grid that was used by this fit.
+    """
+    output = Path(output_dir)
+    output.mkdir(parents=True, exist_ok=True)
+    mapping = fit_native_detector_mapping(fit, bundle)
+    exact = write_exact_fit_plane_products(
+        fit, bundle, config, stage=stage, output_name=output.name, output_dir=output)
+    mapped = lambda image: fit_array_to_detector_fits(image, fit, bundle, mapping)
+    ny, nx = mapping['shape']
+    x0 = mapping['x0']
+    y0 = bundle.data_native.shape[0] - mapping['y0_model_order'] - ny
+    origin = np.asarray(fit.grids.lp.origin, dtype=float)
+
+    def centre(profile):
+        y, x = map(float, profile.centre)
+        return (x0 + (nx-1)/2 + (x-origin[1])/config.pixel_scale,
+                y0 + (ny-1)/2 + (y-origin[0])/config.pixel_scale)
+
+    def write(path, data, product):
+        header = _primary_header(bundle.wcs_header)
+        header['PRODUCT'] = product
+        header['MAPSCHEM'] = 'FITNATIVE1'
+        header['STAGE'] = stage
+        _atomic_fits_write(fits.HDUList([fits.PrimaryHDU(np.asarray(data, dtype=np.float64), header)]), path)
+
+    lenses = [g for g in tracer.galaxies if hasattr(g, 'mass') and hasattr(g, 'bulge')]
+    if len(lenses) != 1:
+        raise ValueError('Expected one light-bearing main lens')
+    lens = lenses[0]
+    profiles = list(lens.bulge.profile_list)
+    if not np.allclose([p.centre for p in profiles], profiles[0].centre, atol=1e-10, rtol=0):
+        raise ValueError('Main-lens MGE profiles must share one centre')
+    galaxies = [al.Galaxy(redshift=config.z_lens, bulge=p) for p in profiles]
+    light_tracer = al.Tracer(galaxies=galaxies)
+    blurred = light_tracer.galaxy_blurred_image_2d_dict_from(
+        grid=fit.grids.lp, psf=fit.dataset.psf, blurring_grid=fit.grids.blurring)
+    cube = np.array([mapped(blurred[g]) for g in galaxies])
+    intrinsic = np.array([mapped(p.image_2d_from(grid=fit.grids.lp)) for p in profiles])
+    main_image = fits.getdata(exact['exact_main_lens_model'])
+    valid = np.isfinite(main_image)
+    error = float(np.max(np.abs(cube.sum(0)[valid] - main_image[valid])))
+    if not np.allclose(cube.sum(0)[valid], main_image[valid], atol=1e-7, rtol=1e-7):
+        raise RuntimeError(f'MGE components do not reproduce the fit: {error}')
+    header = _primary_header(bundle.wcs_header)
+    header['MAPSCHEM'] = 'FITNATIVE1'
+    header['MGESCHEM'] = 'MGE7FULL'
+    header['NGAUSS'] = len(profiles)
+    header['RELL2'] = float(np.linalg.norm((cube.sum(0)-main_image)[valid]) / np.linalg.norm(main_image[valid]))
+    header['EINRAD'] = float(lens.mass.einstein_radius)
+    cube_path = output / f'{config.system}_lens_mge_components_wcs.fits'
+    _atomic_fits_write(fits.HDUList([fits.PrimaryHDU(cube, header), _profile_table(profiles),
+                                   fits.ImageHDU(intrinsic, name='INTRINSIC')]), cube_path)
+    intrinsic_path = output / f'{config.system}_lens_light_intrinsic_wcs.fits'
+    reduced_path = output / f'{config.system}_lens_light_reduced_wcs.fits'
+    write(intrinsic_path, intrinsic.sum(0), 'MAIN_LENS_INTRINSIC')
+    write(reduced_path, fits.getdata(exact['autolens_lens_light_subtracted']), 'FULL_FOREGROUND_SUBTRACTED')
+    x, y = centre(profiles[0])
+    sky = WCS(bundle.wcs_header).celestial.pixel_to_world(x, y).icrs
+    oldx, oldy = autolens_to_fits_pixel(profiles[0].centre, bundle.data_native.shape, config.pixel_scale)
+    psfy, psfx = _psf_centroid_offset(np.asarray(fit.dataset.psf.native))
+    centre_path = output / f'{config.system}_lens_light_centre_wcs.json'
+    centre_record = dict(system=config.system, stage=stage, mapping_schema='fit-native-grid',
+        autolens_y_arcsec=float(profiles[0].centre[0]), autolens_x_arcsec=float(profiles[0].centre[1]),
+        fits_x_pixel_zero_indexed=x, fits_y_pixel_zero_indexed=y, ra_deg=float(sky.ra.deg), dec_deg=float(sky.dec.deg),
+        grid_correction_xy_pixels=[x-oldx, y-oldy], psf_centroid_offset_fits_yx_pix=[-psfy, psfx],
+        centre_definition='intrinsic shared MGE centre mapped through actual fit grid; not a convolved-light centre')
+    centre_path.write_text(json.dumps(centre_record, indent=2)+'\n')
+    records = []
+    for galaxy_index, galaxy in enumerate(tracer.galaxies):
+        if hasattr(galaxy, 'mass') or not hasattr(galaxy, 'bulge') or not np.isclose(galaxy.redshift, config.z_lens):
+            continue
+        index = len(records)
+        satellite_profiles = list(galaxy.bulge.profile_list)
+        model = mapped(fit.galaxy_model_image_dict[fit.tracer.galaxies[galaxy_index]])
+        raw = sum(p.image_2d_from(grid=fit.grids.lp) for p in satellite_profiles)
+        mp = output / f'{config.system}_satellite_{index}_light_model_wcs.fits'
+        ip = output / f'{config.system}_satellite_{index}_light_intrinsic_wcs.fits'
+        write(mp, model, 'SATELLITE_LIGHT_MODEL')
+        write(ip, mapped(raw), 'SATELLITE_LIGHT_INTRINSIC')
+        sx, sy = centre(satellite_profiles[0])
+        sk = WCS(bundle.wcs_header).celestial.pixel_to_world(sx, sy).icrs
+        records.append(dict(index=index, profile_count=len(satellite_profiles),
+            fits_x_pixel_zero_indexed=sx, fits_y_pixel_zero_indexed=sy,
+            autolens_y_arcsec=float(satellite_profiles[0].centre[0]), autolens_x_arcsec=float(satellite_profiles[0].centre[1]),
+            ra_deg=float(sk.ra.deg), dec_deg=float(sk.dec.deg), model=mp.name, intrinsic=ip.name,
+            positive_model_flux=float(np.nansum(np.clip(model, 0, None)))))
+    manifest = dict(system=config.system, stage=stage,
+        tracer=os.path.relpath(tracer_path, output) if tracer_path else None,
+        satellite_count=len(records), satellites=records,
+        autolens_lens_plane_model=Path(exact['autolens_lens_plane_model']).name,
+        autolens_lens_light_subtracted=Path(exact['autolens_lens_light_subtracted']).name,
+        exact_fit_qa=Path(exact['exact_fit_qa']).name)
+    (output / f'{config.system}_satellite_light_manifest.json').write_text(json.dumps(manifest, indent=2)+'\n')
+    qa = dict(system=config.system, stage=stage, component_sum_max_abs_error=error,
+        grid_correction_xy_pixels=[x-oldx, y-oldy], fit_shape=list(mapping['shape']),
+        detector_shape=list(bundle.data_native.shape), fit_grid_origin_yx=origin.tolist())
+    (output / 'consistent_export_complete.json').write_text(json.dumps(qa, indent=2)+'\n')
+    (output / f'{config.system}_wcs_product_qa.json').write_text(json.dumps(qa, indent=2)+'\n')
+    product_manifest = dict(system=config.system, stage=stage, mapping='actual fit-native detector grid',
+        files={key:Path(value).name for key,value in exact.items()},
+        mge_components=cube_path.name, lens_intrinsic=intrinsic_path.name,
+        lens_light_reduced=reduced_path.name, lens_centre=centre_path.name)
+    (output / f'{config.system}_wcs_product_manifest.json').write_text(json.dumps(product_manifest, indent=2)+'\n')
+    return {**exact, 'mge_components':cube_path, 'lens_intrinsic':intrinsic_path,
+            'lens_light_reduced':reduced_path, 'lens_centre':centre_path}

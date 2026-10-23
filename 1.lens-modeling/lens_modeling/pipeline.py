@@ -27,9 +27,9 @@ from .posterior import (
 from .products import write_wcs_products
 
 
-# The v2.90 change is confined to derived-product export and therefore must
-# not invalidate or silently rerun the already validated lens-model likelihood.
-PIPELINE_REVISION = "photo_lens_unified_hsc_cfht_cbz_v1"
+# PSF orientation changes the likelihood. Do not resume a search cached with
+# the former convention that flipped data/noise but left the PSF unflipped.
+PIPELINE_REVISION = "photo_lens_psf_detector_flip_v2"
 STAGE4_REGULARIZATION_REVISION = "clipsig1"
 
 

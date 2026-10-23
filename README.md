@@ -61,12 +61,29 @@ python serve.py --model-python /path/to/photo-lens-modeling/bin/python
 Open **http://127.0.0.1:8765**. The homepage lists mugshots of available systems. Open a system's detail page to run each of the three modules and view its status, task output, and updated images.
 
 - **1.lens-modeling**: reconstruct the saved models and display AutoLens plot panels. Choose “Refit all model stages” to fit the models again.
-- **2.region-detection**: detect and update the lens, source, and symmetric background regions.
+- **2.region-detection**: update lens/source/symmetric-background apertures and any compact satellite apertures. Inspect detected components and anchors, initial/final lens boundaries, source-candidate decisions, carving statistics, effective S/N, and selection warnings in the collapsed **Selection details** below the region plot, including the anchor and source-candidate decision tables.
 - **3.photometric-estimation**: remeasure fluxes and calculate p(z) for the lens and source.
+
+The p(z) figure places the lens above the source, with separate probability scales. The spec-z toggle shows a dashed reference line in each corresponding panel. Automatically exported sky regions use ICRS coordinates. If region inputs change, rerun photometry and photo-z to update the saved fit; the dashboard flags results whose recorded region files have changed.
+
+The dashboard labels saved results with their file update time. Task output is open beside the controls at the top of each module; updating one stage keeps the other stages’ saved figures in place.
 
 Run the modules in order, using the products of the preceding stage. The backend executes tasks serially and allows running tasks to be stopped. Opening `index.html` directly lets you browse the bundled results; executing scripts requires the local backend above. Static hosting services such as GitHub Pages cannot launch Python tasks.
 
 To specify the photometry interpreter or SExtractor explicitly, pass `--photo-python /path/to/python` or `--sextractor /path/to/source-extractor`. Use `--port` to change the port.
+
+### How aperture selection works
+
+Source detection uses the exact AutoLens `FitImaging` lens-plane-subtracted image, including subtraction of modeled satellite light. All products and centres use the same detector grid.
+
+1. One 4σ SExtractor segmentation provides source candidates and protected peak anchors. The PSF size defines the lens-core exclusion and the required anchor clearance.
+2. The MGE lens aperture follows the fitted Einstein radius and respects all protected anchors. The radial scale is 1.0 for HSC and 0.85 for CFHT, followed by point-symmetry closure.
+3. Each 4σ source candidate grows into its connected 2σ island without an area limit. Growth is reverted only if it creates a new overlap with its own point reflection. Lens/source overlap is classified with the point-reflection source fraction (`r_s ≥ 0.4`); direct, reflected-contaminant and self-reflection overlaps are carved out. Candidates must pass area, integrated-S/N and S/N-retention gates; effective S/N selects the winner.
+4. Lens and background share the fitted lens-light centre. The final source and its reflected background use exact pixel-cell boundaries. Export uses this selection directly, without detecting the source a second time.
+
+The region module runs independently: it does **not** trigger photometry or photo-z. Existing flux/p(z) plots remain saved results until you explicitly rerun module 3. Failed runs do not replace the last completed apertures. The notebook and dashboard invoke the same worker.
+
+Store PSFs in the science image's detector row order. For HSC PSF extraction, use `computeKernelImage()` to obtain a centred kernel. The loader flips science, noise and PSF together into AutoLens row order; do not pre-flip the stored PSF.
 
 ### Data and Configuration
 
@@ -91,7 +108,7 @@ For a local system, use its astronomical name consistently:
 - `data/nb/coadd/<wavelength>/<name>/`: `coadd_cutout_<name>.fits` and its `.weight.fits` companion.
 - `data/bb/<name>/catalogue.csv`: matching catalogue rows; the existing `lens_id` column stores the system name.
 - `data/bb/<name>/model_config.json`: explicit AutoLens settings, including redshifts, image HDUs, and pixel scale. Paths are relative to `1.lens-modeling/<name>/`, where the configuration is copied when modeling starts.
-- Optional `data/bb/<name>/system.json`, `mugshot.png`, and `nb_antisymmetry_centres.csv` provide display metadata, a thumbnail, and existing NB centre corrections. `system.json` can specify `field`, `ra`, `dec`, `lens_redshift`, `source_redshift`, and `excluded_bands`.
+- Optional `data/bb/<name>/system.json`, `mugshot.png`, and `nb_antisymmetry_centres.csv` provide display metadata, a thumbnail, and existing NB centre corrections. `system.json` can specify `field`, `ra`, `dec`, `lens_redshift`, `source_redshift`, and `excluded_bands`. Set `model_stage: 3` when the accepted final model is stage 3; otherwise stage 4 is used.
 
 Discovery does not execute any analysis. New systems without saved models start with **Fit model & plot**; subsequent stages become available when their prerequisites exist. Missing results are shown as not yet run. New systems need their own modeling configuration rather than inheriting the example's scientific parameters.
 
@@ -162,12 +179,29 @@ python serve.py --model-python /path/to/photo-lens-modeling/bin/python
 打开 **http://127.0.0.1:8765**。首页列出可运行系统的 mugshot；点击进入详细页面后，可以分别运行三个模块，查看运行状态、任务输出和更新后的图像。
 
 - **1.lens-modeling**：重建已保存模型并显示 AutoLens 组图；“Refit all model stages” 可重新拟合。
-- **2.region-detection**：检测并更新 lens/source/对称背景选区。
+- **2.region-detection**：更新 lens/source/对称背景选区和适用的 satellite 选区。展开选区图下方默认折叠的 **Selection details**，查看检测成分与锚点、lens 初始/最终边界、source 候选取舍、裁剪统计、有效信噪比和选区警告，并列出锚点和 source 候选的完整判定表。
 - **3.photometric-estimation**：重新测量 flux，并计算 lens/source 的 p(z)。
+
+p(z) 图中 lens 在上、source 在下，各自使用独立的概率纵轴；spec-z 开关在对应子图中显示红移虚线。自动导出的天空选区使用 ICRS 坐标。选区输入变更后，需要重新运行测光与 photo-z 才能更新拟合；dashboard 会提示记录中的选区文件已发生变化的旧结果。
 
 三个模块按顺序使用上一步的产物；后台串行执行任务，运行中可停止。直接双击 `index.html` 可以浏览随包结果；执行脚本需要上述本地后台，GitHub Pages 等纯静态网页无法启动 Python。
 
 如需显式指定测光环境或 SExtractor，可传入 `--photo-python /path/to/python`、`--sextractor /path/to/source-extractor`。更改端口使用 `--port`。
+
+### 自动选区流程
+
+source 检测使用 AutoLens `FitImaging` 的精确 lens-plane 扣除图，其中已扣除建模的 satellite 光。所有模型产品和中心统一到同一 detector 像素网格。
+
+1. 用一次 4σ SExtractor 分割同时生成 source 候选和需保护的峰值锚点；PSF 尺寸决定 lens 核心排除范围及锚点安全距离。
+2. MGE lens 选区以拟合的爱因斯坦半径为尺度，并避开所有有效锚点。HSC 径向缩放为 1.0，CFHT 为 0.85，随后进行点对称闭合。
+3. 各 4σ source 候选生长到其相连的完整 2σ 区域，不设置面积倍数上限；若生长引入新的自身镜像重叠，则退回原始候选。随后用点反射 source fraction（`r_s ≥ 0.4`）划分 lens/source 重叠像素，裁去直接污染、镜像污染及自身镜像重叠。通过面积、积分信噪比和裁剪后信噪比保留率门槛的候选，再按有效信噪比选出最终区域。
+4. lens 和背景统一使用拟合的 lens-light 中心。source 及其反射背景按精确像素边界导出；导出阶段直接复用最终选区，不再次检测或选择 source。
+
+页面标明已保存结果的文件更新时间。每个模块顶部的操作按钮下方直接显示 Task output；更新某个模块时，其他模块继续显示各自当前保存的图。
+
+选区模块独立运行，**不会触发测光或 photo-z**。已有 flux/p(z) 图保留到手动重新运行模块 3；失败的选区任务不会替换上一次完整结果。notebook 和 dashboard 使用同一个后台脚本。
+
+PSF 文件应保持与科学图一致的 detector 行序。HSC PSF 抽取使用 `computeKernelImage()` 获得居中的核；加载时会将 science、noise 与 PSF 一起翻转为 AutoLens 行序，不要预先翻转保存的 PSF。
 
 ### 数据与配置
 
@@ -192,7 +226,7 @@ python serve.py --model-python /path/to/photo-lens-modeling/bin/python
 - `data/nb/coadd/<波长>/<name>/`：`coadd_cutout_<name>.fits` 及对应 `.weight.fits`。
 - `data/bb/<name>/catalogue.csv`：该系统的目录记录；保留已有的 `lens_id` 列名，但其值使用系统名称。
 - `data/bb/<name>/model_config.json`：该系统的 AutoLens 参数，包括红移、图像 HDU、像素尺度。路径相对于 `1.lens-modeling/<name>/`；启动建模时才会将配置复制到该位置。
-- 可选的 `data/bb/<name>/system.json`、`mugshot.png` 和 `nb_antisymmetry_centres.csv` 分别提供显示信息、缩略图和已有 NB 中心修正。`system.json` 可设置 `field`、`ra`、`dec`、`lens_redshift`、`source_redshift` 和 `excluded_bands`。
+- 可选的 `data/bb/<name>/system.json`、`mugshot.png` 和 `nb_antisymmetry_centres.csv` 分别提供显示信息、缩略图和已有 NB 中心修正。`system.json` 可设置 `field`、`ra`、`dec`、`lens_redshift`、`source_redshift` 和 `excluded_bands`。若采用 stage 3 作为最终模型，设置 `model_stage: 3`；其余默认使用 stage 4。
 
 自动识别不会启动分析。没有已保存模型的新系统首先显示 **Fit model & plot**；后续模块在前置输入齐全后开放，缺失的结果标为尚未运行。新系统需要自己的建模配置，不会套用示例的科学参数。
 

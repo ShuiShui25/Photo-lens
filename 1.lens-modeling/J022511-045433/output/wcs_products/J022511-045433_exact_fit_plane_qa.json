@@ -1,0 +1,41 @@
+{
+  "convolution": "none; arrays copied directly from FitImaging",
+  "detector_shape": [
+    429,
+    430
+  ],
+  "fit_crop_origin_fits_yx": [
+    165,
+    165
+  ],
+  "fit_crop_origin_model_order_yx": [
+    164,
+    165
+  ],
+  "fit_native_shape": [
+    100,
+    100
+  ],
+  "mapping_schema": "fit-native-integer-detector-crop-v1",
+  "plane_subtraction_identity_max_abs": 0.0,
+  "science_crop_array_equal": true,
+  "serialized_checks": {
+    "lens_light_subtracted": {
+      "array_equal": true,
+      "max_abs_difference": 0.0,
+      "validated_pixels": 1141
+    },
+    "lens_plane": {
+      "array_equal": true,
+      "max_abs_difference": 0.0,
+      "validated_pixels": 1141
+    },
+    "main_lens": {
+      "array_equal": true,
+      "max_abs_difference": 0.0,
+      "validated_pixels": 1141
+    }
+  },
+  "stage": 3,
+  "system": "J022511-045433"
+}
