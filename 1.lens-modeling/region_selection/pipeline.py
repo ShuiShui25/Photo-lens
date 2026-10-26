@@ -12,7 +12,7 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Iterable
 
-os.environ.setdefault("MPLCONFIGDIR", "/tmp/mpl-paus-wcs-region-selection")
+os.environ.setdefault("MPLCONFIGDIR", str(Path(__file__).resolve().parents[2] / ".runtime/matplotlib"))
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -197,7 +197,7 @@ def run_sextractor(
         rms_map = np.where(product.valid, 1.0, 1.0e6)
         fits.writeto(weight_path, rms_map.astype(np.float32), _crop_header(product), overwrite=True)
         background_value = 0.0
-        weight_config = f"WEIGHT_TYPE        MAP_RMS\nWEIGHT_IMAGE       {weight_path}\n"
+        weight_config = f"WEIGHT_TYPE        MAP_RMS\nWEIGHT_IMAGE       {weight_path.name}\n"
     elif input_mode == "raw":
         filled = np.where(product.valid, product.data, product.background)
         detect_threshold = float(settings["detect_thresh"])
@@ -211,15 +211,15 @@ def run_sextractor(
     )
     convolution_path.write_text("CONV NORM\n1 2 1\n2 4 2\n1 2 1\n")
     config_path.write_text(
-        f"""CATALOG_NAME       {catalog_path}
+        f"""CATALOG_NAME       {catalog_path.name}
 CATALOG_TYPE       ASCII_HEAD
-PARAMETERS_NAME    {parameter_path}
+PARAMETERS_NAME    {parameter_path.name}
 DETECT_TYPE        CCD
 DETECT_MINAREA     {int(settings['detect_minarea'])}
 DETECT_THRESH      {detect_threshold}
 ANALYSIS_THRESH    {detect_threshold}
 FILTER             Y
-FILTER_NAME        {convolution_path}
+FILTER_NAME        {convolution_path.name}
 DEBLEND_NTHRESH    {int(settings['deblend_nthresh'])}
 DEBLEND_MINCONT    {float(settings['deblend_mincont'])}
 CLEAN              Y
@@ -229,7 +229,7 @@ BACK_VALUE         {background_value:.12g}
 BACK_SIZE          {int(settings['back_size'])}
 BACK_FILTERSIZE    3
 CHECKIMAGE_TYPE    SEGMENTATION,BACKGROUND
-CHECKIMAGE_NAME    {segmentation_path},{background_path}
+CHECKIMAGE_NAME    {segmentation_path.name},{background_path.name}
 {weight_config}GAIN               1.0
 PIXEL_SCALE        0
 SATUR_LEVEL        1.0e9
@@ -237,7 +237,9 @@ VERBOSE_TYPE       NORMAL
 WRITE_XML          N
 """
     )
-    command = [str(executable), str(input_path), "-c", str(config_path)]
+    # SExtractor tokenizes paths in .sex files on whitespace. All these files
+    # live in cwd, so use local names even when the checkout contains spaces.
+    command = [str(executable), input_path.name, "-c", config_path.name]
     result = subprocess.run(command, cwd=work_dir, text=True, capture_output=True, check=False)
     (work_dir / "sextractor.log").write_text(
         "COMMAND:\n" + " ".join(command) + "\n\nSTDOUT:\n" + result.stdout

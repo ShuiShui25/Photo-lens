@@ -1,8 +1,9 @@
 # Example submission file running with HTCondor.
 # This should only be considered a template!
 #
-Executable = /cephfs/pic.es/astro/scratch/eriksen/miniconda3/envs/bcnz/bin/python
-arguments = /nfs/pic.es/user/e/eriksen/code/bcnz/bcnz/bin/cache_model.py /cephfs/pic.es/astro/scratch/eriksen/cache/bcnz/11 $(model)
+# Supply bcnz_python, bcnz_cache_script and bcnz_model_dir with condor_submit.
+Executable = $(bcnz_python)
+arguments = "'$(bcnz_cache_script)' '$(bcnz_model_dir)' $(model)"
 
 error   = err.$(Process)
 output  = out.$(Process)

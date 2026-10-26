@@ -19,12 +19,13 @@
 from IPython.core import debugger as ipdb
 import os
 import pandas as pd
+from bcnz.paths import input_path
 import psycopg2
 
 
-def _query_sdss(engine):
+def _query_sdss(engine, catalogue_path=None):
     """Open csv file to get the sdss catalogue. FOR W3 !!!!"""
-    #sdss_file = "/nfs/pic.es/user/a/awittje/src/bcnz/bcnz/specz/sdss_dr12_w3_calib.csv"
+    sdss_file = input_path(catalogue_path, "BCNZ_SDSS_CATALOGUE")
     
     cat = pd.read_csv(sdss_file,header = 1)#### 1 !!
     cat = cat.rename(columns = {'redshift':'zspec', 'zwarning':'zquality', 'class':'obj_type', 'i':'magi'}) 
@@ -54,7 +55,7 @@ def _query_refcat(engine):
 
     return cat
 
-def sdss(engine):
+def sdss(engine, catalogue_path=None):
     """Downloads the full sdss_spec (for W3) catalogue and match to get
        PAUdm reference IDs.
 
@@ -64,9 +65,10 @@ def sdss(engine):
 
     import bcnz
 
+    catalogue_path = input_path(catalogue_path, "BCNZ_SDSS_CATALOGUE")
     # Specz catalogue needs positional matching.
     parent_cat = _query_refcat(engine)
-    sdss_in = _query_sdss(engine)
+    sdss_in = _query_sdss(engine, catalogue_path)
     sdss = bcnz.data.match_position(parent_cat, sdss_in)
 
     return sdss    

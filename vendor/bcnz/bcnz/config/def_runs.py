@@ -20,6 +20,7 @@
 
 from IPython.core import debugger as ipdb
 from pathlib import Path
+from bcnz.paths import input_path
 import numpy as np
 import pandas as pd
 
@@ -122,8 +123,21 @@ def eriksen2019():
     return df
 
 
-def test_bayevz():
-    """Different runs to prepare for Alarcon2020 Bayevz runs"""
+def _bayevz_data_paths(data_dir):
+    base = input_path(data_dir, "BCNZ_BAYEVZ_DATA_DIR", directory=True)
+    folders = {"filter_dir": "filt_70bands_noirach", "sed_dir": "seds",
+               "ext_dir": "ext_laws", "filter_dir_calib": "calib_filters"}
+    return {key: str(input_path(base / folder, "BCNZ_BAYEVZ_DATA_DIR", directory=True))
+            for key, folder in folders.items()}
+
+
+def test_bayevz(data_dir=None):
+    """Bayevz runs using data_dir or BCNZ_BAYEVZ_DATA_DIR.
+
+    The external directory must provide filt_70bands_noirach, seds, ext_laws
+    and calib_filters; these datasets are not bundled with Photo-lens.
+    """
+    data_paths = _bayevz_data_paths(data_dir)
 
     nb2bb = True
     norm_band = "r_Subaru"
@@ -188,7 +202,7 @@ def test_bayevz():
         S["norm_band"] = norm_band
         S["ref_mag"] = ref_mag
         S["prior_volume_zid"] = prior_volume_zid
-        df = df.append(S, ignore_index=True)
+        df = pd.concat([df, S.to_frame().T], ignore_index=True)
 
     ext_law = "SB_calzetti_bump2"
     for seds in calzetti:
@@ -202,24 +216,22 @@ def test_bayevz():
             S["norm_band"] = norm_band
             S["ref_mag"] = ref_mag
             S["prior_volume_zid"] = prior_volume_zid
-            df = df.append(S, ignore_index=True)
+            df = pd.concat([df, S.to_frame().T], ignore_index=True)
     # This applies to all configurations.
 
-    test_data_dir = "/Users/alarcon/Documents/source/bcnz/test/data/"
-    filter_dir = test_data_dir + "filt_70bands_noirach/"
-    sed_dir = test_data_dir + "seds/"
-    ext_dir = test_data_dir + "ext_laws/"
-    filter_dir_calib = test_data_dir + "calib_filters/"
-    df["sed_dir"] = sed_dir
-    df["filter_dir"] = filter_dir
-    df["filter_dir_calib"] = filter_dir_calib
-    df["ext_dir"] = ext_dir
+    for key, value in data_paths.items():
+        df[key] = value
 
     return df
 
 
-def pauscosmos_deep():
-    """Different runs to prepare for Alarcon2020 Bayevz runs"""
+def pauscosmos_deep(data_dir=None):
+    """Bayevz runs using data_dir or BCNZ_BAYEVZ_DATA_DIR.
+
+    The external directory must provide filt_70bands_noirach, seds, ext_laws
+    and calib_filters; these datasets are not bundled with Photo-lens.
+    """
+    data_paths = _bayevz_data_paths(data_dir)
 
     nb2bb = True
     norm_band = "r_Subaru"
@@ -291,7 +303,7 @@ def pauscosmos_deep():
         S["norm_band"] = norm_band
         S["ref_mag"] = ref_mag
         S["prior_volume_zid"] = prior_volume_zid
-        df = df.append(S, ignore_index=True)
+        df = pd.concat([df, S.to_frame().T], ignore_index=True)
 
     ext_law = "SB_calzetti_bump2"
     for seds in calzetti:
@@ -305,18 +317,11 @@ def pauscosmos_deep():
             S["norm_band"] = norm_band
             S["ref_mag"] = ref_mag
             S["prior_volume_zid"] = prior_volume_zid
-            df = df.append(S, ignore_index=True)
+            df = pd.concat([df, S.to_frame().T], ignore_index=True)
     # This applies to all configurations.
 
-    test_data_dir = "/Users/alarcon/Documents/source/bcnz/test/data/"
-    filter_dir = test_data_dir + "filt_70bands_noirach/"
-    sed_dir = test_data_dir + "seds/"
-    ext_dir = test_data_dir + "ext_laws/"
-    filter_dir_calib = test_data_dir + "calib_filters/"
-    df["sed_dir"] = sed_dir
-    df["filter_dir"] = filter_dir
-    df["filter_dir_calib"] = filter_dir_calib
-    df["ext_dir"] = ext_dir
+    for key, value in data_paths.items():
+        df[key] = value
 
 
     return df

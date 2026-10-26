@@ -19,12 +19,13 @@
 from IPython.core import debugger as ipdb
 import os
 import pandas as pd
+from bcnz.paths import input_path
 import psycopg2
 from astropy.io import fits
 
-def _query_sdss_gama(engine):
+def _query_sdss_gama(engine, catalogue_path=None):
     """Open csv file to get the sdss catalogue. For W2/KiDS/G9!"""
-    sdss_file = "/nfs/pic.es/user/a/awittje/src/bcnz/bcnz/specz/sdss_g9_nQ3.csv"
+    sdss_file = input_path(catalogue_path, "BCNZ_SDSS_GAMA_CATALOGUE")
     
     cat = pd.read_csv(sdss_file) 
     cat = cat.rename(columns = {'RA':'ra','DEC':'dec', 'Z':'zspec', 'nQ':'z_quality'})
@@ -54,7 +55,7 @@ def _query_refcat(engine):
 
     return cat
 
-def sdss_gama(engine):
+def sdss_gama(engine, catalogue_path=None):
     """Downloads the full sdss_spec (for W2/KiDS G9) catalogue and match to get
        PAUdm reference IDs.
 
@@ -64,9 +65,10 @@ def sdss_gama(engine):
 
     import bcnz
 
+    catalogue_path = input_path(catalogue_path, "BCNZ_SDSS_GAMA_CATALOGUE")
     # Specz catalogue needs positional matching.
     parent_cat = _query_refcat(engine)
-    sdss_in = _query_sdss_gama(engine)
+    sdss_in = _query_sdss_gama(engine, catalogue_path)
     sdss_gama = bcnz.data.match_position(parent_cat, sdss_in)
 
     return sdss_gama

@@ -36,3 +36,6 @@ dist/
 
 # Local presentation files; do not publish.
 /slides/
+
+# Cython build output is regenerated from the bundled .pyx sources.
+/vendor/bcnz/bcnz/bayint/*.c

@@ -30,7 +30,7 @@ def parse_args():
 def configure_jax(platform: str) -> None:
     os.environ.setdefault("XLA_PYTHON_CLIENT_PREALLOCATE", "false")
     os.environ.setdefault("JAX_ENABLE_X64", "true")
-    os.environ.setdefault("MPLCONFIGDIR", "/tmp/matplotlib-paus-lens-modeling")
+    os.environ.setdefault("MPLCONFIGDIR", str(Path(__file__).resolve().parents[1] / ".runtime/matplotlib"))
     if platform == "gpu":
         # JAX's concrete NVIDIA backend is named ``cuda``. Using the generic
         # word ``gpu`` also probes an installed ROCm registration first in this

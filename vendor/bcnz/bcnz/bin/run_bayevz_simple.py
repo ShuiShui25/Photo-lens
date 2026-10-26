@@ -21,6 +21,8 @@ import numpy as np
 import pandas as pd
 from pathlib import Path
 import bcnz
+from bcnz.paths import input_path
+import os
 import sys
 
 import dask
@@ -164,10 +166,9 @@ def get_bands():
     return NB + BB
 
 
-def get_model(model_dir):
+def get_model(model_dir, data_dir=None):
 
-    # runs = bcnz.config.test_bayevz()
-    runs = bcnz.config.pauscosmos_deep()
+    runs = bcnz.config.pauscosmos_deep(data_dir=data_dir)
 
     modelD = bcnz.model.cache_model_bayevz(model_dir, runs)
     model_calib = bcnz.model.cache_model_bayevz_calib(model_dir, runs)
@@ -175,13 +176,11 @@ def get_model(model_dir):
     return runs, modelD, model_calib
 
 
-def get_data_hack():
+def get_data_hack(catalogue_file=None, zero_point_file=None):
 
     bands = get_bands()
-    # HACK:
-    path = "/Users/alarcon/Dropbox/paucats/"
-    filename = "pau821_70bands_i23_min002_NB2BB_PUBLIC.csv"
-    df = pd.read_table(path + filename, sep=",", header=0)
+    path = input_path(catalogue_file, "BCNZ_BAYEVZ_CATALOGUE")
+    df = pd.read_table(path, sep=",", header=0)
     df = df[(df.zspec > 0.19) & (df.zspec < 0.21)]
 
     flux_cols = ["flux_" + x for x in old_filters]
@@ -205,15 +204,8 @@ def get_data_hack():
     for key in keepcols:
         cat[key] = df[key]
 
-    # HACK:
-    path1 = "/Users/alarcon/Dropbox/bpzbcnz/integrate_gauss/"
-    zp = np.prod(
-        np.loadtxt(
-            path1
-            + "zp_chi2_withlim_5sig_inv_bayesev_data821_MBE_newcalib_ext_225_70bands_onlyzs_min002_NB2BB_DESpriv_EMfixed_nobug_noirach_FOII_priors_allEM_noexpbug_test1"
-        ),
-        axis=0,
-    )
+    zero_point_path = input_path(zero_point_file, "BCNZ_BAYEVZ_ZEROPOINTS")
+    zp = np.prod(np.loadtxt(zero_point_path), axis=0)
     zp /= zp[44]
     zp = dict(zip(bands, zp))
     zp = pd.Series(zp)
@@ -291,10 +283,8 @@ def get_input(
     engine = bcnz.connect_db_localhost(9000)
     galcat = get_catalog(catalog_name, engine, memba_prod, field, coadd_file)
 
-    # hack
-    path = "/Users/alarcon/Dropbox/paucats/"
-    filename = "pau821_70bands_i23_min002_NB2BB_PUBLIC.csv"
-    df = pd.read_table(path + filename, sep=",", header=0)
+    path = input_path(None, "BCNZ_BAYEVZ_CATALOGUE")
+    df = pd.read_table(path, sep=",", header=0)
 
     df = df[df.zspec > 0.0][["ref_id", "zspec"]]
     df = pd.DataFrame(
@@ -462,15 +452,24 @@ def run_photoz_schwimmbad(output_dir, model_dir, catalog_name, memba_prod, pool)
 
 if __name__ == "__main__":
 
-    model_dir = "/Users/alarcon/Documents/tmp_bcnz/tmp_model/pauscosmos_test2/"
-    # output_dir = "/Users/alarcon/Documents/tmp_bcnz/tmp_output/test1/"
-    output_dir = "/Users/alarcon/Documents/tmp_bcnz/tmp_output/pauscosmos_test3/"
-    catalog_name = "pauscosmos"
-    memba_prod = 984
-    # run_photoz(output_dir, model_dir, catalog_name)
-    # run_photoz_serial(output_dir, model_dir, catalog_name, memba_prod)
+    import argparse
 
-    # """
+    parser = argparse.ArgumentParser(description="Run the optional MPI Bayevz workflow")
+    parser.add_argument("--model-dir", required=True, type=Path)
+    parser.add_argument("--output-dir", required=True, type=Path)
+    parser.add_argument("--data-dir", help="External templates; alternatively BCNZ_BAYEVZ_DATA_DIR")
+    parser.add_argument("--catalogue-file", help="External catalogue; alternatively BCNZ_BAYEVZ_CATALOGUE")
+    parser.add_argument("--catalog-name", default="pauscosmos")
+    parser.add_argument("--memba-prod", type=int, default=984)
+    args = parser.parse_args()
+    os.environ["BCNZ_BAYEVZ_DATA_DIR"] = str(input_path(
+        args.data_dir, "BCNZ_BAYEVZ_DATA_DIR", directory=True))
+    os.environ["BCNZ_BAYEVZ_CATALOGUE"] = str(input_path(
+        args.catalogue_file, "BCNZ_BAYEVZ_CATALOGUE"))
+    model_dir = args.model_dir.expanduser().resolve()
+    output_dir = args.output_dir.expanduser().resolve()
+    catalog_name, memba_prod = args.catalog_name, args.memba_prod
+
     from schwimmbad import MPIPool
 
     pool = MPIPool()
